@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane Ryan – Director, Mill Bay/Malahat Area A</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a3a2a;
+    --pine: #2d5a3d;
+    --sage: #4a7c5e;
+    --mint: #7bbf94;
+    --ocean: #1b4f72;
+    --sky: #2e86ab;
+    --sky-light: #5ba4c7;
+    --cream: #f7f4ee;
+    --warm-white: #fdfcf9;
+    --gold: #c9a227;
+    --text-dark: #1a1a1a;
+    --text-mid: #3a3a3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(26,58,42,0.97);
+    backdrop-filter: blur(8px);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: rgba(247,244,238,0.82);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-left {
+    background: var(--forest);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 5rem 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a7c5e' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.2rem, 5vw, 5.5rem);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 0.95;
+    margin-bottom: 1.4rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.4s forwards;
+  }
+
+  .hero-title {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--mint);
+    letter-spacing: 0.04em;
+    margin-bottom: 2.2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.55s forwards;
+  }
+
+  .hero-tagline {
+    font-size: 1.18rem;
+    color: rgba(247,244,238,0.85);
+    line-height: 1.65;
+    max-width: 400px;
+    margin-bottom: 2.8rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.7s forwards;
+  }
+
+  .hero-tagline strong { color: var(--cream); font-weight: 600; }
+
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: var(--gold);
+    color: var(--forest);
+    padding: 0.9rem 2.2rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.85s forwards;
+    width: fit-content;
+  }
+  .hero-cta:hover { background: #e0b52a; transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative;
+    background: var(--ocean);
+    overflow: hidden;
+  }
+
+  .hero-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(27,79,114,0.4) 0%, rgba(26,58,42,0.6) 100%);
+    z-index: 1;
+  }
+
+  .hero-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0;
+    animation: fadeIn 1s 0.5s forwards;
+  }
+
+  .hero-photo-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(26,58,42,0.95) 0%, transparent 60%);
+    padding: 2.5rem 2.5rem 2rem;
+  }
+
+  .hero-area-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .hero-area-text {
+    color: var(--cream);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--ocean);
+    padding: 2rem 4rem;
+    display: flex; justify-content: space-around; align-items: center;
+    flex-wrap: wrap; gap: 1.5rem;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(247,244,238,0.7);
+  }
+  .stat-divider { width: 1px; height: 50px; background: rgba(247,244,238,0.2); }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 6rem 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 900;
+    color: var(--forest);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .section-title .accent { color: var(--sky); }
+
+  /* ── PRIORITIES ── */
+  .priorities { background: var(--cream); }
+  .priorities-intro {
+    max-width: 620px;
+    font-size: 1.08rem;
+    color: var(--text-mid);
+    line-height: 1.75;
+    margin-bottom: 3.5rem;
+  }
+
+  .priorities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .priority-card {
+    background: var(--warm-white);
+    border-left: 4px solid var(--sage);
+    padding: 2rem;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .priority-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .priority-card:hover {
+    border-color: var(--ocean);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(27,79,114,0.12);
+  }
+  .priority-card:hover::after { transform: scaleX(1); }
+
+  .priority-icon {
+    width: 44px; height: 44px;
+    background: var(--forest);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+    font-size: 1.2rem;
+  }
+  .priority-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 0.7rem;
+  }
+  .priority-text {
+    font-size: 0.93rem;
+    color: var(--text-mid);
+    line-height: 1.65;
+  }
+
+  /* ── TAX CHART SECTION ── */
+  .tax-section { background: var(--forest); color: var(--cream); }
+  .tax-section .section-title { color: var(--cream); }
+  .tax-section .section-label { color: var(--mint); }
+
+  .tax-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .tax-copy p {
+    font-size: 1.02rem;
+    color: rgba(247,244,238,0.82);
+    line-height: 1.75;
+    margin-bottom: 1.2rem;
+  }
+  .tax-stat {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem; font-weight: 900;
+    padding: 0.4rem 1.2rem;
+    margin: 0.8rem 0 0.4rem;
+  }
+  .tax-stat-label {
+    font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mint);
+    display: block; margin-bottom: 1.5rem;
+  }
+
+  .chart-wrapper {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 2px;
+  }
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream); font-size: 1.05rem;
+    margin-bottom: 1.5rem; text-align: center;
+  }
+  .chart-img {
+    width: 100%; border-radius: 2px;
+    display: block;
+  }
+  .chart-caption {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: rgba(247,244,238,0.5);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ABOUT ── */
+  .about { background: var(--warm-white); }
+  .about-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-photo-wrap { position: relative; }
+  .about-photo {
+    width: 100%;
+    display: block;
+    border: 3px solid var(--forest);
+  }
+  .about-photo-label {
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    background: var(--forest);
+    color: var(--cream);
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.6rem;
+  }
+
+  .about-copy p {
+    font-size: 1.02rem;
+    color: var(--text-mid);
+    line-height: 1.78;
+    margin-bottom: 1.2rem;
+  }
+
+  .about-highlights {
+    margin: 2rem 0;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .highlight-item {
+    display: flex; align-items: flex-start; gap: 0.9rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+  }
+  .highlight-check {
+    color: var(--sage); font-size: 1rem; flex-shrink: 0; margin-top: 1px;
+  }
+  .highlight-text { font-size: 0.93rem; color: var(--text-mid); line-height: 1.5; }
+  .highlight-text strong { color: var(--forest); }
+
+  /* ── RECORD ── */
+  .record { background: linear-gradient(160deg, #1b4f72 0%, #1a3a2a 100%); }
+  .record .section-title { color: var(--cream); }
+  .record .section-label { color: var(--mint); }
+  .record-intro {
+    color: rgba(247,244,238,0.8);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-width: 640px;
+    margin-bottom: 3rem;
+  }
+  .record-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+  .record-item {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 1.8rem;
+    transition: background 0.2s;
+  }
+  .record-item:hover { background: rgba(255,255,255,0.12); }
+  .record-year {
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.6rem;
+  }
+  .record-desc {
+    color: var(--cream);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* ── FAMILY ── */
+  .family { background: var(--cream); }
+  .family-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 4rem;
+    align-items: center;
+  }
+  .family-copy p {
+    font-size: 1.02rem; color: var(--text-mid);
+    line-height: 1.78; margin-bottom: 1.1rem;
+  }
+  .community-pills {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .pill {
+    background: var(--forest); color: var(--cream);
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+  }
+  .family-photo {
+    width: 100%; display: block;
+    border: 3px solid var(--forest);
+    box-shadow: 12px 12px 0 var(--sage);
+  }
+
+  /* ── SIGN UP ── */
+  .signup { background: var(--forest); }
+  .signup-inner {
+    max-width: 680px; margin: 0 auto;
+    text-align: center;
+  }
+  .signup .section-label { color: var(--mint); }
+  .signup .section-title { color: var(--cream); }
+  .signup-text {
+    color: rgba(247,244,238,0.78);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .signup-form {
+    display: flex; gap: 0;
+    max-width: 500px; margin: 0 auto;
+  }
+  .signup-input {
+    flex: 1;
+    padding: 0.9rem 1.4rem;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: var(--cream);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .signup-input::placeholder { color: rgba(247,244,238,0.4); }
+  .signup-input:focus { border-color: var(--gold); }
+  .signup-btn {
+    background: var(--gold);
+    color: var(--forest);
+    border: none;
+    padding: 0.9rem 1.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .signup-btn:hover { background: #e0b52a; }
+  .signup-note {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: rgba(247,244,238,0.45);
+  }
+  .signup-success {
+    display: none;
+    background: rgba(74,124,94,0.3);
+    border: 1px solid var(--mint);
+    color: var(--mint);
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* ── CONTACT ── */
+  .contact { background: var(--warm-white); padding: 5rem 0; }
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .contact-info .section-title { margin-bottom: 1.5rem; }
+  .contact-details { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-row {
+    display: flex; align-items: center; gap: 1rem;
+    font-size: 1rem; color: var(--text-mid);
+  }
+  .contact-row a { color: var(--ocean); text-decoration: none; }
+  .contact-row a:hover { text-decoration: underline; }
+  .contact-icon {
+    width: 38px; height: 38px;
+    background: var(--forest);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cream);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0f2218;
+    color: rgba(247,244,238,0.5);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+  }
+  footer a { color: var(--mint); text-decoration: none; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { height: 55vw; min-height: 320px; }
+    .hero-left { padding: 6rem 2rem 3rem; }
+    .tax-layout, .about-layout, .family-layout, .contact-layout {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .about-layout { grid-template-columns: 1fr; }
+    .about-photo-wrap { max-width: 380px; }
+    .family-layout { grid-template-columns: 1fr; }
+    .family-photo { max-width: 400px; }
+    .stat-divider { display: none; }
+    .stats-bar { padding: 2rem; }
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1rem; }
+    .signup-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Shane <span>Ryan</span></div>
+  <ul class="nav-links">
+    <li><a href="#priorities">Priorities</a></li>
+    <li><a href="#record">Track Record</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#signup">Get Involved</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Cowichan Valley Regional District · Area A</p>
+    <h1 class="hero-name">Shane<br>Ryan</h1>
+    <p class="hero-title">Candidate for Director — Mill Bay / Malahat Area A</p>
+    <p class="hero-tagline">A proven community leader who will <strong>fight for Area A residents</strong> — not sell the CVRD to them.</p>
+    <a href="#signup" class="hero-cta">
+      <span>Join the Campaign</span>
+      <span>→</span>
+    </a>
+  </div>
+  <div class="hero-right">
+    <img src="/mnt/user-data/uploads/pro.jpg" alt="Shane Ryan" class="hero-photo">
+    <div class="hero-photo-overlay">
+      <span class="hero-area-badge">Fall 2025 Election</span>
+      <p class="hero-area-text">Mill Bay / Malahat<br>Area A Director</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num">5+</span>
+    <span class="stat-label">Years Community League President</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num">52</span>
+    <span class="stat-label">Affordable Senior Housing Units</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num">50+</span>
+    <span class="stat-label">Jobs Saved at Western Stevedoring</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <span class="stat-num">30+</span>
+    <span class="stat-label">Dogs Rescued &amp; Fostered</span>
+  </div>
+</div>
+
+<!-- PRIORITIES -->
+<section class="priorities" id="priorities">
+  <div class="container">
+    <p class="section-label">Platform</p>
+    <h2 class="section-title">Priorities for <span class="accent">Area A</span></h2>
+    <p class="priorities-intro">The Director's primary job is to be a fierce advocate at the CVRD for the people of Area A. Shane Ryan is committed to ensuring the CVRD works <em>for</em> residents — not the other way around.</p>
+    <div class="priorities-grid">
+      <div class="priority-card">
+        <div class="priority-icon">💰</div>
+        <h3 class="priority-title">Rein In Spending</h3>
+        <p class="priority-text">Property taxes have increased 40% since the current director took office. Shane will stop out-of-control spending, demand accountability, and restore fiscal responsibility to the CVRD.</p>
+      </div>
+      <div class="priority-card">
+        <div class="priority-icon">🌲</div>
+        <h3 class="priority-title">Wildfire &amp; Watershed Resilience</h3>
+        <p class="priority-text">Living on the Malahat Mountain, Shane understands first-hand the importance of proactive wildfire preparedness and protecting our watershed for long-term community safety.</p>
+      </div>
+      <div class="priority-card">
+        <div class="priority-icon">🏠</div>
+        <h3 class="priority-title">Seniors Housing</h3>
+        <p class="priority-text">Shane is already facilitating a 52-unit affordable housing project for seniors in Mill Bay. He will champion expanded housing options and services for seniors across Area A.</p>
+      </div>
+      <div class="priority-card">
+        <div class="priority-icon">🚌</div>
+        <h3 class="priority-title">Transportation</h3>
+        <p class="priority-text">Improved transportation connections are essential for a growing community. Shane will advocate for practical, affordable solutions that make it easier for residents to get around.</p>
+      </div>
+      <div class="priority-card">
+        <div class="priority-icon">🔍</div>
+        <h3 class="priority-title">Transparency &amp; Accountability</h3>
+        <p class="priority-text">Shane will hold the CVRD accountable with full transparency — asking the hard questions and demanding clear answers on behalf of every Area A resident.</p>
+      </div>
+      <div class="priority-card">
+        <div class="priority-icon">🛠️</div>
+        <h3 class="priority-title">Small Business &amp; Jobs</h3>
+        <p class="priority-text">As an experienced entrepreneur, Shane will cut red tape to create opportunities for small businesses and ensure our kids have good local jobs here in Area A.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAX CHART -->
+<section class="tax-section" id="taxes">
+  <div class="container">
+    <div class="tax-layout">
+      <div class="tax-copy">
+        <p class="section-label">The Numbers Don't Lie</p>
+        <h2 class="section-title">Taxes Are Out of Control</h2>
+        <span class="tax-stat">40%</span>
+        <span class="tax-stat-label">Property Tax Increase Under Current Director</span>
+        <p>Since the current director took office, average property taxes in Mill Bay have skyrocketed from roughly $3,950 in 2021 to nearly $6,000 in 2024. That's an unacceptable burden on Area A families.</p>
+        <p>Shane Ryan will bring the fiscal discipline and accountability needed to reverse this trend — fighting for every dollar of taxpayer money.</p>
+      </div>
+      <div class="chart-wrapper">
+        <p class="chart-title">Average Property Tax — Mill Bay</p>
+        <img src="/mnt/user-data/uploads/image_12.png" alt="Average Property Tax Mill Bay chart showing increases under current director" class="chart-img">
+        <p class="chart-caption">Source: CVRD Property Tax Data · Blue = Previous Director · Red = Current Director</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACK RECORD -->
+<section class="record" id="record">
+  <div class="container">
+    <p class="section-label">Proven Results</p>
+    <h2 class="section-title">Shane's Track Record</h2>
+    <p class="record-intro">As Alternate Director, Shane Ryan was already hard at work for Area A residents. These aren't just promises — they're results.</p>
+    <div class="record-grid">
+      <div class="record-item">
+        <p class="record-year">Alternate Director</p>
+        <p class="record-desc"><strong style="color:var(--gold)">Saved 50+ Jobs</strong> — Fought to protect employment at Western Stevedoring, standing up for local workers when it counted.</p>
+      </div>
+      <div class="record-item">
+        <p class="record-year">Alternate Director</p>
+        <p class="record-desc"><strong style="color:var(--gold)">Malahat Skywalk</strong> — Voted in favour of the Malahat Skywalk, supporting local economic development and tourism.</p>
+      </div>
+      <div class="record-item">
+        <p class="record-year">Alternate Director</p>
+        <p class="record-desc"><strong style="color:var(--gold)">Opposed Pay Hikes</strong> — Voiced strong opposition and voted against director pay increases during the pandemic, putting residents first.</p>
+      </div>
+      <div class="record-item">
+        <p class="record-year">Alternate Director</p>
+        <p class="record-desc"><strong style="color:var(--gold)">Questioned Spending</strong> — Consistently challenged CVRD expenditures, demanding justification and accountability.</p>
+      </div>
+      <div class="record-item">
+        <p class="record-year">Community League President</p>
+        <p class="record-desc"><strong style="color:var(--gold)">5 Years of Service</strong> — Raised thousands for the CMS foodbank, the Francis Kelsey lunch program, and local community initiatives.</p>
+      </div>
+      <div class="record-item">
+        <p class="record-year">Active Today</p>
+        <p class="record-desc"><strong style="color:var(--gold)">52 Housing Units</strong> — Facilitating a 52-unit affordable seniors housing project in Mill Bay with a non-profit partner, right now.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-photo-wrap">
+        <img src="/mnt/user-data/uploads/pro.jpg" alt="Shane Ryan" class="about-photo">
+        <div class="about-photo-label">Shane Ryan · Area A Resident</div>
+      </div>
+      <div class="about-copy">
+        <p class="section-label">About Shane</p>
+        <h2 class="section-title">Rooted in<br><span class="accent">Area A</span></h2>
+        <p>Shane Ryan, 49, is a Malahat resident, small business owner, and former Alternate Director who has spent years fighting for the people of Area A. He is announcing his candidacy for Director in the fall 2025 election.</p>
+        <p>Shane, his wife Christine, and their 11-year-old daughter Elizabeth live entirely off-grid on the Malahat Mountain within Area A. Both Shane and Christine are self-employed and deeply committed to this community.</p>
+        <div class="about-highlights">
+          <div class="highlight-item">
+            <span class="highlight-check">✦</span>
+            <p class="highlight-text"><strong>Experienced entrepreneur</strong> — has built and sold successful businesses, career in private sector finance, and currently operates a successful software consulting company.</p>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✦</span>
+            <p class="highlight-text"><strong>Mill Bay Community League President</strong> for 5 years — fundraising for the local food bank, school lunch programs, and affordable housing.</p>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✦</span>
+            <p class="highlight-text"><strong>Active foster family</strong> — 30+ dogs rescued and fostered, parishioners of St. Francis Xavier Church, Mill Bay.</p>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✦</span>
+            <p class="highlight-text"><strong>Christine Ryan</strong>, volunteer charity auctioneer, has raised tens of thousands of dollars for many important local causes alongside daughter Elizabeth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAMILY -->
+<section class="family">
+  <div class="container">
+    <div class="family-layout">
+      <div class="family-copy">
+        <p class="section-label">Family &amp; Community</p>
+        <h2 class="section-title">Invested in<br><span class="accent">Our Community</span></h2>
+        <p>Shane and Christine Ryan are more than residents — they're active contributors to the fabric of Mill Bay and Area A. From fostering rescue animals to volunteering at local schools and churches, the Ryan family is genuinely invested in this place they call home.</p>
+        <p>Christine's volunteer charity auction work has raised tens of thousands of dollars for local causes — work the whole family plans to continue together.</p>
+        <div class="community-pills">
+          <span class="pill">Mill Bay Community League</span>
+          <span class="pill">St. Francis Xavier Church</span>
+          <span class="pill">CMS Food Bank</span>
+          <span class="pill">Francis Kelsey Lunch Program</span>
+          <span class="pill">Animal Rescue Foster Family</span>
+          <span class="pill">Off-Grid Living</span>
+        </div>
+      </div>
+      <img src="/mnt/user-data/uploads/image.jpeg" alt="Shane Ryan with family" class="family-photo">
+    </div>
+  </div>
+</section>
+
+<!-- SIGN UP -->
+<section class="signup" id="signup">
+  <div class="container">
+    <div class="signup-inner">
+      <p class="section-label">Get Involved</p>
+      <h2 class="section-title">Join the<br>Movement</h2>
+      <p class="signup-text">Sign up to receive campaign updates, event invitations, and ways to get involved. Together, we can put Area A first.</p>
+      <div class="signup-form" id="signupForm">
+        <input type="email" class="signup-input" id="emailInput" placeholder="Your email address">
+        <button class="signup-btn" onclick="handleSignup()">Sign Up</button>
+      </div>
+      <div class="signup-success" id="signupSuccess">
+        ✓ Thank you! You'll hear from us soon.
+      </div>
+      <p class="signup-note">No spam. Unsubscribe anytime. Your information stays private.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="contact-info">
+        <p class="section-label">Get In Touch</p>
+        <h2 class="section-title">Contact<br>Shane</h2>
+        <div class="contact-details">
+          <div class="contact-row">
+            <div class="contact-icon">✉</div>
+            <a href="mailto:shane@shaneryan.ca">shane@shaneryan.ca</a>
+          </div>
+          <div class="contact-row">
+            <div class="contact-icon">☎</div>
+            <a href="tel:7785333204">778 533 3204</a>
+          </div>
+          <div class="contact-row">
+            <div class="contact-icon">🌐</div>
+            <a href="http://www.ShaneRyan.ca" target="_blank">www.ShaneRyan.ca</a>
+          </div>
+        </div>
+      </div>
+      <div style="background: var(--cream); padding: 2.5rem; border-left: 4px solid var(--gold);">
+        <p style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--forest); margin-bottom: 1rem;">"The primary job of any Area Director is to be a fierce advocate at the CVRD — and for me, it will be to fight for the residents of Area A."</p>
+        <p style="font-size: 0.88rem; color: var(--text-mid); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">— Shane Ryan</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · <a href="mailto:shane@shaneryan.ca">shane@shaneryan.ca</a> · <a href="http://www.ShaneRyan.ca">ShaneRyan.ca</a></p>
+</footer>
+
+<script>
+  function handleSignup() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.borderColor = '#e74c3c';
+      return;
+    }
+    document.getElementById('signupForm').style.display = 'none';
+    document.getElementById('signupSuccess').style.display = 'block';
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.style.opacity = '1';
+        el.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.priority-card, .record-item, .highlight-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s, transform 0.5s';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
