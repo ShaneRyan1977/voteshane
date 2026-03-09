@@ -862,8 +862,8 @@
   </div>
 </section>
 
-<script src="https://js-na3.hsforms.net/forms/embed/342921394.js" defer></script>
-<div class="hs-form-frame" data-region="na3" data-form-id="34b093d7-cc27-4bfe-8fb4-8f97db2f1d6d" data-portal-id="342921394"></div>
+<!--<center></center><script src="https://js-na3.hsforms.net/forms/embed/342921394.js" defer></script>
+<div class="hs-form-frame" data-region="na3" data-form-id="34b093d7-cc27-4bfe-8fb4-8f97db2f1d6d" data-portal-id="342921394"></div></center> -->
 
 <!-- FOOTER -->
 <footer>
@@ -877,6 +877,28 @@
       document.getElementById('emailInput').style.borderColor = '#e74c3c';
       return;
     }
+
+
+    fetch("https://api.hsforms.com/submissions/v3/integration/submit/342921394/34b093d7-cc27-4bfe-8fb4-8f97db2f1d6d", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fields: [
+          {
+            name: "email",
+            value: email
+          }
+        ],
+        context: {
+          pageUri: window.location.href,
+          pageName: document.title
+        }
+      })
+    })
+    .then(() => alert("Thanks for subscribing!"));
+
     document.getElementById('signupForm').style.display = 'none';
     document.getElementById('signupSuccess').style.display = 'block';
   }
