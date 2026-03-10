@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane Ryan – Rack Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #c8c8c8;
+    font-family: 'Source Sans 3', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: -30px;
+  }
+
+  /* Rack card: 3.5" × 8.5" → at 96dpi = 336 × 816px */
+  .card {
+    width: 336px;
+    height: 816px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+
+  /* ===== FRONT ===== */
+  .front {
+    background: #0a1f3c;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .front-header {
+    background: linear-gradient(135deg, #0a1f3c 0%, #1a3a6c 100%);
+    padding: 28px 24px 22px;
+    position: relative;
+    border-bottom: 3px solid #c8a84b;
+  }
+
+  .front-header::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #c8a84b, #f0d070, #c8a84b);
+  }
+
+  .election-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin-bottom: 10px;
+  }
+
+  .candidate-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .candidate-title {
+    font-size: 11px;
+    font-weight: 400;
+    color: #a0b8d8;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+  }
+
+  .photo-strip {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .photo-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: saturate(0.85) contrast(1.05);
+  }
+
+  .photo-strip::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, #0a1f3c);
+  }
+
+  .stats-row {
+    display: flex;
+    border-top: 1px solid rgba(200,168,75,0.3);
+    border-bottom: 1px solid rgba(200,168,75,0.3);
+  }
+
+  .stat-box {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid rgba(200,168,75,0.2);
+  }
+
+  .stat-box:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #c8a84b;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #a0b8d8;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin-top: 3px;
+  }
+
+  .priorities-section {
+    padding: 18px 22px;
+    flex: 1;
+  }
+
+  .section-heading {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin-bottom: 13px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(200,168,75,0.3);
+  }
+
+  .priority-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .priority-icon {
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .priority-text strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+  }
+
+  .priority-text span {
+    font-size: 9.5px;
+    color: #8aadd0;
+    line-height: 1.4;
+  }
+
+  .tax-callout {
+    background: linear-gradient(135deg, #8b0000, #c0392b);
+    margin: 0 22px 16px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    border-left: 3px solid #ff6b6b;
+  }
+
+  .tax-callout-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .tax-callout-text {
+    font-size: 9.5px;
+    color: #ffcccc;
+    line-height: 1.4;
+    margin-top: 3px;
+  }
+
+  .front-footer {
+    background: #c8a84b;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .front-footer-url {
+    font-size: 10px;
+    font-weight: 700;
+    color: #0a1f3c;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .front-footer-date {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #0a1f3c;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* ===== BACK ===== */
+  .back {
+    background: #f5f2ec;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .back-header {
+    background: #0a1f3c;
+    padding: 18px 22px 16px;
+    position: relative;
+  }
+
+  .back-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #ffffff;
+  }
+
+  .back-subtitle {
+    font-size: 9px;
+    font-weight: 600;
+    color: #c8a84b;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .gold-rule {
+    height: 3px;
+    background: linear-gradient(90deg, #c8a84b, #f0d070, #c8a84b);
+  }
+
+  .about-section {
+    padding: 16px 22px 12px;
+    background: #f5f2ec;
+  }
+
+  .back-section-heading {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin-bottom: 8px;
+  }
+
+  .about-text {
+    font-size: 10px;
+    color: #2c3e50;
+    line-height: 1.65;
+  }
+
+  .about-text strong { color: #0a1f3c; }
+
+  .divider {
+    height: 1px;
+    background: rgba(200,168,75,0.3);
+    margin: 0 22px;
+  }
+
+  .track-record-section {
+    padding: 12px 22px;
+  }
+
+  .record-item {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-bottom: 9px;
+  }
+
+  .record-check {
+    width: 14px;
+    height: 14px;
+    background: #0a1f3c;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .record-check::after {
+    content: '✓';
+    font-size: 8px;
+    color: #c8a84b;
+    font-weight: 700;
+  }
+
+  .record-text strong {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #0a1f3c;
+  }
+
+  .record-text span {
+    font-size: 9px;
+    color: #5a6a7a;
+    line-height: 1.4;
+  }
+
+  .quote-block {
+    background: #0a1f3c;
+    margin: 0 22px;
+    padding: 14px 16px;
+    border-left: 3px solid #c8a84b;
+  }
+
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 11.5px;
+    font-style: italic;
+    color: #e8dfc8;
+    line-height: 1.55;
+  }
+
+  .quote-attr {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #c8a84b;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .contact-section {
+    padding: 12px 22px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+
+  .contact-icon {
+    font-size: 12px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .contact-info {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #0a1f3c;
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .tag {
+    background: #0a1f3c;
+    color: #c8a84b;
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  .back-footer {
+    background: #c8a84b;
+    padding: 8px 22px;
+    text-align: center;
+  }
+
+  .back-footer-text {
+    font-size: 7.5px;
+    font-weight: 600;
+    color: #0a1f3c;
+    letter-spacing: 0.5px;
+  }
+
+  @media print {
+    body { background: white; gap: 0; padding: 0; }
+    .card { box-shadow: none; page-break-after: always; }
+    .label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="label">FRONT</div>
+
+<!-- FRONT OF CARD -->
+<div class="card front">
+
+  <div class="front-header">
+    <div class="election-badge">▸ CVRD Area A Director · October 17, 2026</div>
+    <div class="candidate-name">Shane Ryan</div>
+    <div class="candidate-title">Candidate for Director — Mill Bay / Malahat Area A<br>Cowichan Valley Regional District</div>
+  </div>
+
+  <div class="photo-strip">
+    <img src="pro.jpg" alt="Shane Ryan" />
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">Years Community League President</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">52</div>
+      <div class="stat-label">Senior Housing Units Facilitated</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">Jobs Saved at W. Stevedoring</div>
+    </div>
+  </div>
+
+  <div class="priorities-section">
+    <div class="section-heading">Platform Priorities</div>
+
+    <div class="priority-item">
+      <div class="priority-icon">💰</div>
+      <div class="priority-text">
+        <strong>Rein In Spending</strong>
+        <span>Demand accountability & restore fiscal responsibility to the CVRD.</span>
+      </div>
+    </div>
+    <div class="priority-item">
+      <div class="priority-icon">🌲</div>
+      <div class="priority-text">
+        <strong>Wildfire & Watershed</strong>
+        <span>Proactive preparedness protecting our mountain community.</span>
+      </div>
+    </div>
+    <div class="priority-item">
+      <div class="priority-icon">🏠</div>
+      <div class="priority-text">
+        <strong>Seniors Housing</strong>
+        <span>Champion expanded housing options for our seniors.</span>
+      </div>
+    </div>
+    <div class="priority-item">
+      <div class="priority-icon">🚌</div>
+      <div class="priority-text">
+        <strong>Transportation</strong>
+        <span>Bus access for underserved areas like Spectacle Lake.</span>
+      </div>
+    </div>
+    <div class="priority-item">
+      <div class="priority-icon">🔍</div>
+      <div class="priority-text">
+        <strong>Transparency & Accountability</strong>
+        <span>Hard questions, clear answers — on your behalf.</span>
+      </div>
+    </div>
+    <div class="priority-item">
+      <div class="priority-icon">🛠️</div>
+      <div class="priority-text">
+        <strong>Small Business & Jobs</strong>
+        <span>Cut red tape so families can build their futures here.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tax-callout">
+    <div class="tax-callout-num">40% Tax Hike</div>
+    <div class="tax-callout-text">Property taxes rose from ~$3,950 (2021) to ~$6,000 (2024) under the current Director. Enough is enough.</div>
+  </div>
+
+  <div class="front-footer">
+    <div class="front-footer-url">ShaneRyan.ca</div>
+    <div class="front-footer-date">Election Day<br>Oct 17, 2026</div>
+  </div>
+
+</div>
+
+<div class="label">BACK</div>
+
+<!-- BACK OF CARD -->
+<div class="card back">
+
+  <div class="back-header">
+    <div class="back-name">Shane Ryan</div>
+    <div class="back-subtitle">Rooted in Mill Bay · Ready to Serve</div>
+  </div>
+  <div class="gold-rule"></div>
+
+  <div class="about-section">
+    <div class="back-section-heading">About Shane</div>
+    <div class="about-text">
+      Shane Ryan, 49, is a <strong>Malahat resident, small business owner,</strong> and former CVRD Alternate Director. He lives entirely off-grid in a solar-powered home with his wife Christine and daughter Elizabeth. An experienced entrepreneur previously in private-sector finance, Shane now runs a successful software consulting company. He is a current parishioner of St. Francis Xavier Church, Mill Bay, and an active foster family who has rescued 30+ dogs.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="track-record-section">
+    <div class="back-section-heading">Proven Track Record</div>
+
+    <div class="record-item">
+      <div class="record-check"></div>
+      <div class="record-text">
+        <strong>Saved 50+ Jobs</strong>
+        <span>Fought to protect employment at Western Stevedoring as Alternate Director.</span>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-check"></div>
+      <div class="record-text">
+        <strong>Opposed Director Pay Hikes During COVID</strong>
+        <span>Voted against CVRD pay increases, putting residents first.</span>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-check"></div>
+      <div class="record-text">
+        <strong>52 Affordable Senior Housing Units</strong>
+        <span>Currently facilitating project in Mill Bay Village with non-profit partner.</span>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-check"></div>
+      <div class="record-text">
+        <strong>5 Years as Community League President</strong>
+        <span>Raised thousands for CMS Foodbank & Francis Kelsey lunch program.</span>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-check"></div>
+      <div class="record-text">
+        <strong>Consistent CVRD Accountability</strong>
+        <span>Challenged expenditures and demanded justification at every turn.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="quote-block" style="margin-top: 12px;">
+    <div class="quote-text">"The primary job of the Area Director is to be a fierce advocate for the electorate. I will be that voice for all of us in Mill Bay/Malahat."</div>
+    <div class="quote-attr">— Shane Ryan</div>
+  </div>
+
+  <div class="contact-section">
+    <div class="back-section-heading">Get In Touch</div>
+    <div class="contact-row">
+      <div class="contact-icon">✉</div>
+      <div class="contact-info">shane@shaneryan.ca</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">☎</div>
+      <div class="contact-info">778 533 3204</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-icon">🌐</div>
+      <div class="contact-info">www.ShaneRyan.ca</div>
+    </div>
+
+    <div class="tags-row" style="margin-top: 10px;">
+      <div class="tag">Lower Taxes</div>
+      <div class="tag">Transparency</div>
+      <div class="tag">Senior Housing</div>
+      <div class="tag">Local Jobs</div>
+      <div class="tag">Wildfire Safety</div>
+      <div class="tag">Community First</div>
+    </div>
+  </div>
+
+  <div class="back-footer">
+    <div class="back-footer-text">Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · ShaneRyan.ca</div>
+  </div>
+
+</div>
+
+</body>
+</html>
