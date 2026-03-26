@@ -87,7 +87,7 @@
   }
 
   .photo-strip {
-    height: 200px;
+    height: 210px;
     overflow: hidden;
     position: relative;
   }
@@ -95,16 +95,16 @@
   .photo-strip img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    filter: saturate(0.85) contrast(1.05);
+    object-fit: contain;
+    object-position: center 15%;
+    filter: saturate(0.9) contrast(1.05);
   }
 
   .photo-strip::after {
     content: '';
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 60px;
+    height: 10px;
     background: linear-gradient(transparent, #0a1f3c);
   }
 
@@ -363,7 +363,7 @@
   }
 
   .contact-section {
-    padding: 12px 22px;
+    padding: 8px 22px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -412,6 +412,48 @@
     background: #c8a84b;
     padding: 8px 22px;
     text-align: center;
+  }
+
+  .family-photo-strip {
+    height: 130px;
+    overflow: hidden;
+    position: relative;
+    margin: 10px 0 0;
+  }
+
+  .family-photo-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  .family-photo-strip::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(#f5f2ec, transparent);
+    z-index: 1;
+  }
+
+  .family-photo-strip::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 30px;
+    background: linear-gradient(transparent, #f5f2ec);
+    z-index: 1;
+  }
+
+  .family-caption {
+    font-size: 8px;
+    font-weight: 600;
+    color: #8a9aaa;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 4px 0 8px;
   }
 
   .back-footer-text {
@@ -492,13 +534,6 @@
       </div>
     </div>
     <div class="priority-item">
-      <div class="priority-icon">🔍</div>
-      <div class="priority-text">
-        <strong>Transparency & Accountability</strong>
-        <span>Hard questions, clear answers — on your behalf.</span>
-      </div>
-    </div>
-    <div class="priority-item">
       <div class="priority-icon">🛠️</div>
       <div class="priority-text">
         <strong>Small Business & Jobs</strong>
@@ -509,7 +544,7 @@
 
   <div class="tax-callout">
     <div class="tax-callout-num">40% Tax Hike</div>
-    <div class="tax-callout-text">Property taxes rose from ~$3,950 (2021) to ~$6,000 (2024) under the current Director. Enough is enough.</div>
+    <div class="tax-callout-text">Property taxes rose from ~$3,950 (2021) to ~$5,600 (2024) under the current Director. Enough is enough.</div>
   </div>
 
   <div class="front-footer">
@@ -563,14 +598,14 @@
         <span>Currently facilitating project in Mill Bay Village with non-profit partner.</span>
       </div>
     </div>
-    <div class="record-item">
+        <div class="record-item">
       <div class="record-check"></div>
       <div class="record-text">
         <strong>5 Years as Community League President</strong>
         <span>Raised thousands for CMS Foodbank & Francis Kelsey lunch program.</span>
       </div>
     </div>
-    <div class="record-item">
+<div class="record-item">
       <div class="record-check"></div>
       <div class="record-text">
         <strong>Consistent CVRD Accountability</strong>
@@ -586,11 +621,16 @@
     <div class="quote-attr">— Shane Ryan</div>
   </div>
 
+  <div class="family-photo-strip">
+    <img src="family.jpg" alt="Shane Ryan with family" />
+  </div>
+  <div class="family-caption">Shane, Christine &amp; Elizabeth — Mill Bay/Malahat</div>
+
   <div class="contact-section">
     <div class="back-section-heading">Get In Touch</div>
     <div class="contact-row">
       <div class="contact-icon">✉</div>
-      <div class="contact-info">shane@shaneryan.ca</div>
+      <div class="contact-info">shane@shaneryan.ca</a></div>
     </div>
     <div class="contact-row">
       <div class="contact-icon">☎</div>
@@ -612,10 +652,4 @@
   </div>
 
   <div class="back-footer">
-    <div class="back-footer-text">Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · ShaneRyan.ca</div>
-  </div>
-
-</div>
-
-</body>
-</html>
+    <div class="back-footer-text">Authorized by S
