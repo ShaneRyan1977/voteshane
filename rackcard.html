@@ -47,7 +47,7 @@
 
   .front-header {
     background: linear-gradient(135deg, #0a1f3c 0%, #1a3a6c 100%);
-    padding: 28px 24px 22px;
+    padding: 5px 10px 1px;
     position: relative;
     border-bottom: 3px solid #c8a84b;
   }
@@ -67,15 +67,22 @@
     text-transform: uppercase;
     color: #c8a84b;
     margin-bottom: 10px;
+    text-align: center;
   }
 
   .candidate-name {
-    font-family: 'Playfair Display', serif;
     font-size: 36px;
-    font-weight: 900;
+    font-weight: 700;
     color: #ffffff;
-    line-height: 1;
-    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .director {
+   font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+    line-height: 0.9;
   }
 
   .candidate-title {
@@ -98,6 +105,12 @@
     object-fit: contain;
     object-position: center 15%;
     filter: saturate(0.9) contrast(1.05);
+  }
+
+  .vote-check img {
+    width: 50%;
+    display:block;
+    margin:auto;
   }
 
   .photo-strip::after {
@@ -142,19 +155,19 @@
   }
 
   .priorities-section {
-    padding: 18px 22px;
+    padding: 9px 10px;
     flex: 1;
   }
 
-  .section-heading {
-    font-size: 9px;
+  .slogan {
     font-weight: 700;
     letter-spacing: 2px;
-    text-transform: uppercase;
     color: #c8a84b;
     margin-bottom: 13px;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(200,168,75,0.3);
+    text-align: center;
+    font-size: 28px;
   }
 
   .priority-item {
@@ -173,14 +186,14 @@
 
   .priority-text strong {
     display: block;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 0.2px;
   }
 
   .priority-text span {
-    font-size: 9.5px;
+    font-size: 14px;
     color: #8aadd0;
     line-height: 1.4;
   }
@@ -191,6 +204,7 @@
     padding: 12px 16px;
     border-radius: 4px;
     border-left: 3px solid #ff6b6b;
+    text-align: center;
   }
 
   .tax-callout-num {
@@ -202,7 +216,7 @@
   }
 
   .tax-callout-text {
-    font-size: 9.5px;
+    font-size: 12px;
     color: #ffcccc;
     line-height: 1.4;
     margin-top: 3px;
@@ -210,14 +224,14 @@
 
   .front-footer {
     background: #c8a84b;
-    padding: 10px 22px;
+    padding: 5px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
   .front-footer-url {
-    font-size: 10px;
+    font-size: 15px;
     font-weight: 700;
     color: #0a1f3c;
     letter-spacing: 0.5px;
@@ -273,7 +287,7 @@
   }
 
   .back-section-heading {
-    font-size: 8px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 2.5px;
     text-transform: uppercase;
@@ -333,7 +347,7 @@
   }
 
   .record-text span {
-    font-size: 9px;
+    font-size: 10px;
     color: #5a6a7a;
     line-height: 1.4;
   }
@@ -378,14 +392,14 @@
   }
 
   .contact-icon {
-    font-size: 12px;
+    font-size: 14px;
     width: 20px;
     text-align: center;
     flex-shrink: 0;
   }
 
   .contact-info {
-    font-size: 10.5px;
+    font-size: 13px;
     font-weight: 600;
     color: #0a1f3c;
   }
@@ -415,7 +429,7 @@
   }
 
   .family-photo-strip {
-    height: 175px;
+    height: 300px;
     overflow: hidden;
     position: relative;
     margin: 10px 0 0;
@@ -478,16 +492,17 @@
 <div class="card front">
 
   <div class="front-header">
-    <div class="election-badge">▸ CVRD Area A Director · October 17, 2026</div>
-    <div class="candidate-name">Shane Ryan</div>
-    <div class="candidate-title">Candidate for Director — Mill Bay / Malahat Area A<br>Cowichan Valley Regional District</div>
+    <div class="election-badge">CVRD Area A Director · October 17, 2026</div>
+    <div class="vote-check"><img src="vote.png" alt="Vote" /></div>
+    <div class="candidate-name">SHANE RYAN</div>
+    <div class="slogan">WORKING FOR <u>YOU</u></div>
   </div>
 
   <div class="photo-strip">
     <img src="pro.jpg" alt="Shane Ryan" />
   </div>
 
-  <div class="stats-row">
+  <!--<div class="stats-row">
     <div class="stat-box">
       <div class="stat-num">5+</div>
       <div class="stat-label">Years Community League President</div>
@@ -500,51 +515,45 @@
       <div class="stat-num">50+</div>
       <div class="stat-label">Jobs Saved at W. Stevedoring</div>
     </div>
-  </div>
+  </div>-->
 
   <div class="priorities-section">
-    <div class="section-heading">Platform Priorities</div>
+    <div class="director">For Mill Bay/Malahat</div>
+     <div class="director">Area Director</div>
 
     <div class="priority-item">
+      <div class="priority-icon">📖</div>
+      <div class="priority-text">
+        <strong>Transparency</strong>
+        <span>I will put the public first, no more big decisions behind closed doors.</span>
+      </div>
+    </div>
+     <div class="priority-item">
       <div class="priority-icon">💰</div>
       <div class="priority-text">
-        <strong>Rein In Spending</strong>
-        <span>Demand accountability & restore fiscal responsibility to the CVRD.</span>
+        <strong>Taxes</strong>
+        <span>I will ensure every dollar is spent wisely, stopping runaway tax increases.</span>
       </div>
     </div>
     <div class="priority-item">
       <div class="priority-icon">🌲</div>
       <div class="priority-text">
-        <strong>Wildfire & Watershed</strong>
-        <span>Proactive preparedness protecting our mountain community.</span>
+        <strong>Watershed</strong>
+        <span>I will act responsibly to safeguard water under record demand.</span>
       </div>
     </div>
     <div class="priority-item">
-      <div class="priority-icon">🏠</div>
+    <div class="priority-icon">🎧</div>
       <div class="priority-text">
-        <strong>Seniors Housing</strong>
-        <span>Champion expanded housing options for our seniors.</span>
+        <strong>Representation</strong>
+        <span>I will speak for you, not for the CVRD.</span>
       </div>
-    </div>
-    <div class="priority-item">
-      <div class="priority-icon">🚌</div>
-      <div class="priority-text">
-        <strong>Transportation</strong>
-        <span>Bus access for underserved areas like Spectacle Lake.</span>
       </div>
-    </div>
-    <div class="priority-item">
-      <div class="priority-icon">🛠️</div>
-      <div class="priority-text">
-        <strong>Small Business & Jobs</strong>
-        <span>Cut red tape so families can build their futures here.</span>
-      </div>
-    </div>
   </div>
 
   <div class="tax-callout">
-    <div class="tax-callout-num">40% Tax Hike</div>
-    <div class="tax-callout-text">Property taxes rose from ~$3,950 (2021) to ~$5,600 (2024) under the current Director. Enough is enough.</div>
+    <div class="tax-callout-num">40% Local Tax Hike</div>
+    <div class="tax-callout-text">Under the current Director. Enough is enough.</div>
   </div>
 
   <div class="front-footer">
@@ -568,7 +577,7 @@
   <div class="about-section">
     <div class="back-section-heading">About Shane</div>
     <div class="about-text">
-      Shane Ryan, 49, is a <strong>Malahat resident, small business owner,</strong> and former CVRD Alternate Director. He lives entirely off-grid in a solar-powered home with his wife Christine and daughter Elizabeth. An experienced entrepreneur previously in private-sector finance, Shane now runs a successful software consulting company. He is a current parishioner of St. Francis Xavier Church, Mill Bay, and an active foster family who has rescued 30+ dogs.
+      Shane Ryan, 49, is a <strong>Mill Bay/Malahat resident, small business owner,</strong> and former CVRD Alternate Director. He lives with his wife Christine and daughter Elizabeth. An experienced entrepreneur previously in private-sector finance, Shane now runs a successful software consulting company.
     </div>
   </div>
 
@@ -588,14 +597,14 @@
       <div class="record-check"></div>
       <div class="record-text">
         <strong>Opposed Director Pay Hikes During COVID</strong>
-        <span>Voted against CVRD pay increases, putting residents first.</span>
+        <span>Voted against CVRD pay increases, put residents first.</span>
       </div>
     </div>
     <div class="record-item">
       <div class="record-check"></div>
       <div class="record-text">
         <strong>52 Affordable Senior Housing Units</strong>
-        <span>Currently facilitating project in Mill Bay Village with non-profit partner.</span>
+        <span>Facilitating project in Mill Bay Village with non-profit partner.</span>
       </div>
     </div>
         <div class="record-item">
@@ -605,13 +614,6 @@
         <span>Raised thousands for CMS Foodbank & Francis Kelsey lunch program.</span>
       </div>
     </div>
-    <!--<div class="record-item">
-      <div class="record-check"></div>
-      <div class="record-text">
-        <strong>Consistent CVRD Accountability</strong>
-        <span>Challenged expenditures and demanded justification at every turn.</span>
-      </div>
-    </div>-->
   </div>
 
 <div class="divider"></div>
@@ -624,7 +626,6 @@
   <div class="family-photo-strip">
     <img src="family.jpg" alt="Shane Ryan with family" />
   </div>
-  <div class="family-caption">Shane, Christine &amp; Elizabeth — Mill Bay/Malahat</div>
 
   <div class="contact-section">
     <div class="back-section-heading">Get In Touch</div>
@@ -634,7 +635,7 @@
     </div>
     <div class="contact-row">
       <div class="contact-icon">☎</div>
-      <div class="contact-info">778 533 3204</div>
+      <div class="contact-info">(778) 533-3204</div>
     </div>
     <div class="contact-row">
       <div class="contact-icon">🌐</div>
@@ -646,13 +647,15 @@
       <div class="tag">Transparency</div>
       <div class="tag">Senior Housing</div>
       <div class="tag">Local Jobs</div>
-      <div class="tag">Wildfire Safety</div>
-      <div class="tag">Community First</div>
+      <div class="tag">Less Red Tape</div>
+      <div class="tag">Protecting Community</div>
+      <div class="tag">Smaller Government</div>
+      <div class="tag">Environmental Stewardship</div>
     </div>
   </div>
 
   <div class="back-footer">
-    <div class="back-footer-text">Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · ShaneRyan.ca</div>
+    <div class="back-footer-text">Authorized by Shane Ryan Campaign for Mill Bay/Malahat Area A Director.</div>
   </div>
 
 </div>
