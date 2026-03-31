@@ -96,6 +96,7 @@
     background: var(--navy);
     text-align: center;
     padding: 20px 20px 18px;
+    position: relative;
   }
   .name-block::after {
     content: '';
@@ -131,11 +132,11 @@
     min-height: 150px;
   }
   .photo-block img {
-    width: 60%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center top;
     display: block;
-    margin-left: 65px;
   }
   .photo-block::after {
     content: '';
@@ -147,10 +148,10 @@
 
   .photo-caption {
     position: absolute;
-    bottom: 8px;
+    bottom: 10px;
     left: 0; right: 0;
     text-align: center;
-    font-size: 15px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -163,7 +164,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    position: relative;
   }
   .pillar {
     display: flex;
@@ -184,7 +184,7 @@
     margin-bottom: 2px;
   }
   .pillar-desc {
-    font-size: 19.5px;
+    font-size: 11.5px;
     color: var(--muted);
     line-height: 1.4;
   }
@@ -200,13 +200,14 @@
   }
   .tax-number {
     font-family: 'Playfair Display', serif;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 900;
     color: var(--gold);
     line-height: 1;
+    flex-shrink: 0;
   }
   .tax-desc {
-    font-size: 13px;
+    font-size: 12px;
     color: rgba(255,255,255,0.88);
     line-height: 1.45;
   }
@@ -232,7 +233,7 @@
     letter-spacing: 0.03em;
   }
   .front-footer .election-info {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--navy);
     text-align: right;
@@ -256,7 +257,7 @@
     line-height: 1;
   }
   .back-header .subtitle {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -344,26 +345,17 @@
     display: flex;
     gap: 18px;
     flex-wrap: wrap;
-    position: relative;
   }
   .contact-item {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 14.5px;
+    font-size: 12.5px;
     color: var(--text);
     font-weight: 500;
   }
   .contact-item .ci {
     font-size: 14px;
-  }
-
-  .qr-code {
-    width: 20%;
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    display: none;
   }
 
   .priorities-section {
@@ -405,7 +397,7 @@
 <div class="card front">
   <div class="front-header">
     <span class="election-line">CVRD Area A Director</span>
-    <span class="date-pill">Saturday October 17, 2026</span>
+    <span class="date-pill">Oct 17, 2026</span>
   </div>
 
   <div class="vote-banner">
@@ -438,14 +430,14 @@
       </div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">💧</div>
+      <div class="pillar-icon">🌲</div>
       <div>
         <div class="pillar-title">Watershed</div>
         <div class="pillar-desc">Safeguard water under record demand.</div>
       </div>
     </div>
     <div class="pillar">
-      <div class="pillar-icon">🎤</div>
+      <div class="pillar-icon">🎧</div>
       <div>
         <div class="pillar-title">Representation</div>
         <div class="pillar-desc">Speaking for you, not the CVRD.</div>
@@ -454,16 +446,16 @@
   </div>
 
   <div class="tax-banner">
-    <div class="tax-number">40% Tax Increase</div>
+    <div class="tax-number">40% +</div>
     <div class="tax-desc">
-      <strong>Under the Current Director.</strong>
+      <strong>In the Current Directors Term.</strong>
       Your taxes are growing faster than ever. Enough is enough.
     </div>
   </div>
 
   <div class="front-footer">
     <span class="url">ShaneRyan.ca</span>
-    <span class="election-info">Election Day Saturday Oct 17, 2026</span>
+    <span class="election-info">Election Day<br>Oct 17, 2026</span>
   </div>
 </div>
 
@@ -513,7 +505,6 @@
     <div class="contact-item"><span class="ci">✉</span> shane@shaneryan.ca</div>
     <div class="contact-item"><span class="ci">☎</span> (778) 533-3204</div>
     <div class="contact-item"><span class="ci">🌐</span> www.ShaneRyan.ca</div>
-    <img class="qr-code" src="qr.png">
   </div>
 
   <div class="priorities-section">
