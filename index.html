@@ -609,6 +609,38 @@
       display: none;
     }
   }
+
+  .cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px; /* optional spacing if you have multiple buttons */
+  margin-top: 20px;
+}
+
+  .cta-button.donate {
+  display: inline-block;
+  background-color: #c9a227; /* your existing gold tone */
+  color: #163524; /* deep green text (matches header palette) */
+  padding: 16px 34px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  border-radius: 0px; /* matches your sharp editorial style */
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.cta-button.donate:hover {
+  background-color: #b8921f; /* slightly darker gold */
+  transform: translateY(-1px);
+}
+
+.cta-button.donate:active {
+  transform: translateY(0px);
+}
 </style>
 </head>
 <body>
@@ -852,6 +884,12 @@
       <p class="signup-note">No spam. Unsubscribe anytime. Your information stays private.</p>
     </div>
   </div>
+
+  <div class="cta-container">
+  <a class="cta-button donate" href="https://donate.stripe.com/fZudRb51f2BQc1nabB5EY00" target="_blank">
+    DONATE
+  </a>
+</div>
 </section>
 
 <!-- CONTACT -->
