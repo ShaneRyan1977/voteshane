@@ -163,18 +163,16 @@
   }
 
   .hero-photo {
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center 25%;
+    position: absolute;
+    top: 0;
+    left: 0;
     opacity: 0;
     animation: fadeIn 1s 0.5s forwards;
   }
-
-  @media (max-width: 900px) {
-  .hero-photo {
-    object-position: center 40%;
-  }
-}
 
   .hero-photo-overlay {
     position: absolute; bottom: 0; left: 0; right: 0;
@@ -581,10 +579,6 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; }
-    .hero-right { height: 70vw; min-height: 380px; }
-.hero-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; position: absolute; top: 0; left: 0; }
-    .hero-left { padding: 6rem 2rem 3rem; }
     .tax-layout, .about-layout, .family-layout, .contact-layout {
       grid-template-columns: 1fr;
       gap: 2.5rem;
@@ -600,11 +594,42 @@
     .signup-form { flex-direction: column; }
   }
 
+  /* ── MOBILE HERO FIX — applies to all phones ── */
+  @media screen and (max-width: 767px) {
+    .hero {
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: unset !important;
+    }
+    .hero-left {
+      width: 100% !important;
+      padding: 5rem 1.5rem 2.5rem !important;
+      min-height: unset !important;
+      order: 2;
+    }
+    .hero-right {
+      width: 100% !important;
+      height: 80vw !important;
+      min-height: 280px !important;
+      max-height: 420px !important;
+      position: relative !important;
+      order: 1;
+    }
+    .hero-photo {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center 15% !important;
+    }
+  }
+
   .hide-on-small {
     display: block;
-    }
+  }
 
-  /* Hide when screen is 768px or smaller */
   @media (max-width: 768px) {
     .hide-on-small {
       display: none;
@@ -612,36 +637,35 @@
   }
 
   .cta-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px; /* optional spacing if you have multiple buttons */
-  margin-top: 20px;
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+  }
 
   .cta-button.donate {
-  display: inline-block;
-  background-color: #c9a227; /* your existing gold tone */
-  color: #163524; /* deep green text (matches header palette) */
-  padding: 16px 34px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-decoration: none;
+    display: inline-block;
+    background-color: #c9a227;
+    color: #163524;
+    padding: 16px 34px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 0px;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+  }
 
-  border-radius: 0px; /* matches your sharp editorial style */
-  transition: background-color 0.2s ease, transform 0.15s ease;
-}
+  .cta-button.donate:hover {
+    background-color: #b8921f;
+    transform: translateY(-1px);
+  }
 
-.cta-button.donate:hover {
-  background-color: #b8921f; /* slightly darker gold */
-  transform: translateY(-1px);
-}
-
-.cta-button.donate:active {
-  transform: translateY(0px);
-}
+  .cta-button.donate:active {
+    transform: translateY(0px);
+  }
 </style>
 </head>
 <body>
@@ -674,9 +698,10 @@
     <img src="pro.jpg" alt="Shane Ryan" class="hero-photo">
     <div class="hide-on-small">
       <div class="hero-photo-overlay">
-      <span class="hero-area-badge">Fall 2026 Election -- October 17th</span>
-      <p class="hero-area-text">Mill Bay / Malahat<br>Area A Director</p>
-    </div></div>
+        <span class="hero-area-badge">Fall 2026 Election -- October 17th</span>
+        <p class="hero-area-text">Mill Bay / Malahat<br>Area A Director</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -708,8 +733,7 @@
   <div class="container">
     <p class="section-label">Platform</p>
     <h2 class="section-title">Priorities for <span class="accent">Mill Bay Malahat (Area A)</span></h2>
-    <p class="priorities-intro"><i>Vote for me because I’ll put residents first—not bureaucracy.</i><br><br>Vote for me because I bring both real experience and a fresh perspective. During COVID, I served as an Alternate Director at the CVRD and saw firsthand how decisions were being made and where accountability was lacking. As a small business owner, I understand the pressure families and local businesses face from rising taxes, regulations, and red tape. I’ll fight for responsible spending, greater transparency, and policies that protect freedom, support residents, and keep our government focused on serving the community.<br><br>My slogan is simple: <strong>Less is More</strong>: Less taxes. Less red tape. More freedom. More accountability.</p>
-
+    <p class="priorities-intro"><i>Vote for me because I'll put residents first—not bureaucracy.</i><br><br>Vote for me because I bring both real experience and a fresh perspective. During COVID, I served as an Alternate Director at the CVRD and saw firsthand how decisions were being made and where accountability was lacking. As a small business owner, I understand the pressure families and local businesses face from rising taxes, regulations, and red tape. I'll fight for responsible spending, greater transparency, and policies that protect freedom, support residents, and keep our government focused on serving the community.<br><br>My slogan is simple: <strong>Less is More</strong>: Less taxes. Less red tape. More freedom. More accountability.</p>
 
     <div class="priorities-grid">
       <div class="priority-card">
@@ -842,8 +866,8 @@
       <div class="family-copy">
         <p class="section-label">Family &amp; Community</p>
         <h2 class="section-title">Invested in<br><span class="accent">Our Community</span></h2>
-        <p>Shane Ryan has been President of the Mill Bay Community League for over 5 years. During Shane’s tenure as Mill Bay Community League President, he has helped raise thousands of dollars for our local CMS Foodbank, the lunch program at Francis Kelsey, and is currently facilitating 52 units of affordable seniors housing on Mill Bay Community League land.</p>
-        <p>Shane Ryan’s wife Christine, through her volunteer work has raised significant amounts of money for many important local causes, and their daughter Elizabeth is already contributing widely in community events.</p>
+        <p>Shane Ryan has been President of the Mill Bay Community League for over 5 years. During Shane's tenure as Mill Bay Community League President, he has helped raise thousands of dollars for our local CMS Foodbank, the lunch program at Francis Kelsey, and is currently facilitating 52 units of affordable seniors housing on Mill Bay Community League land.</p>
+        <p>Shane Ryan's wife Christine, through her volunteer work has raised significant amounts of money for many important local causes, and their daughter Elizabeth is already contributing widely in community events.</p>
         <div class="community-pills">
           <span class="pill">Mill Bay Community League</span>
           <span class="pill">Affordable Senior's Housing</span>
@@ -880,10 +904,10 @@
   </div>
 
   <div class="cta-container">
-  <a class="cta-button donate" href="https://donate.stripe.com/fZudRb51f2BQc1nabB5EY00" target="_blank">
-    DONATE
-  </a>
-</div>
+    <a class="cta-button donate" href="https://donate.stripe.com/fZudRb51f2BQc1nabB5EY00" target="_blank">
+      DONATE
+    </a>
+  </div>
 </section>
 
 <!-- CONTACT -->
@@ -916,9 +940,6 @@
   </div>
 </section>
 
-<!--<center></center><script src="https://js-na3.hsforms.net/forms/embed/342921394.js" defer></script>
-<div class="hs-form-frame" data-region="na3" data-form-id="34b093d7-cc27-4bfe-8fb4-8f97db2f1d6d" data-portal-id="342921394"></div></center> -->
-
 <!-- FOOTER -->
 <footer>
   <p>Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · <a href="mailto:shane@shaneryan.ca">shane@shaneryan.ca</a> · <a href="http://www.ShaneRyan.ca">ShaneRyan.ca</a></p>
@@ -931,7 +952,6 @@
       document.getElementById('emailInput').style.borderColor = '#e74c3c';
       return;
     }
-
 
     fetch("https://api.hsforms.com/submissions/v3/integration/submit/342921394/34b093d7-cc27-4bfe-8fb4-8f97db2f1d6d", {
       method: "POST",
