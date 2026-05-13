@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane Ryan – Business Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #d0d0d0;
+    font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 48px;
+  }
+
+  h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #555;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .instructions {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 24px;
+    max-width: 700px;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .instructions strong { color: #0a2240; }
+
+  /* Card wrapper with crop marks */
+  /* Business card: 3.5" x 2" = 1050px x 600px @ 300dpi */
+  /* At 96dpi screen: 3.5" x 2" = 336px x 192px */
+  /* We'll render at 2x for quality: 672px x 384px */
+
+  .card-set {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .card-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #777;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* Crop mark wrapper */
+  .crop-wrap {
+    position: relative;
+    width: 672px;
+    height: 384px;
+  }
+
+  /* Crop marks — 8px lines, 6px gap from card edge */
+  .crop-wrap::before,
+  .crop-wrap::after,
+  .crop-wrap .cm-tr::before,
+  .crop-wrap .cm-tr::after,
+  .crop-wrap .cm-bl::before,
+  .crop-wrap .cm-bl::after,
+  .crop-wrap .cm-br::before,
+  .crop-wrap .cm-br::after {
+    content: '';
+    position: absolute;
+    background: #888;
+  }
+
+  /* Top-left corner */
+  .crop-wrap::before { width: 14px; height: 0.5px; top: -8px; left: 0; }
+  .crop-wrap::after  { width: 0.5px; height: 14px; top: 0; left: -8px; }
+
+  /* Top-right */
+  .crop-wrap .cm-tr::before { width: 14px; height: 0.5px; top: -8px; right: 0; }
+  .crop-wrap .cm-tr::after  { width: 0.5px; height: 14px; top: 0; right: -8px; }
+
+  /* Bottom-left */
+  .crop-wrap .cm-bl::before { width: 14px; height: 0.5px; bottom: -8px; left: 0; }
+  .crop-wrap .cm-bl::after  { width: 0.5px; height: 14px; bottom: 0; left: -8px; }
+
+  /* Bottom-right */
+  .crop-wrap .cm-br::before { width: 14px; height: 0.5px; bottom: -8px; right: 0; }
+  .crop-wrap .cm-br::after  { width: 0.5px; height: 14px; bottom: 0; right: -8px; }
+
+  .cm-tr, .cm-bl, .cm-br {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+  }
+
+  /* THE CARD */
+  .card {
+    width: 672px;
+    height: 384px;
+    border-radius: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  /* ── FRONT ── */
+  .card-front {
+    background: #0a2240;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 42px 46px 34px;
+  }
+
+  .card-front::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 172px; height: 172px;
+    background: #c0392b;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+
+  .card-front::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 7px;
+    background: #c8a84b;
+  }
+
+  .front-vote {
+    position: absolute;
+    top: 24px; right: 22px;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    z-index: 2;
+  }
+
+  .front-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 26px;
+    z-index: 1;
+  }
+
+  .front-photo {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #c8a84b;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .front-name-block {
+    padding-top: 4px;
+  }
+
+  .front-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.05;
+  }
+
+  .front-title {
+    font-size: 19px;
+    font-weight: 300;
+    letter-spacing: 0.07em;
+    color: #c8a84b;
+    text-transform: uppercase;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  .front-tagline-wrap {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 10px;
+  }
+
+  .front-tagline-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    font-style: italic;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+  }
+
+  .front-tagline-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── BACK ── */
+  .card-back {
+    background: #f5f2eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 36px 46px 30px;
+  }
+
+  .card-back::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 7px;
+    background: #0a2240;
+  }
+
+  .card-back::after {
+    content: '';
+    position: absolute;
+    top: 7px; left: 0;
+    width: 100%; height: 4px;
+    background: #c8a84b;
+  }
+
+  .back-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #0a2240;
+  }
+
+  .back-sub {
+    font-size: 17px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+
+  .back-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    color: #1a2e45;
+  }
+
+  .contact-icon {
+    font-size: 20px;
+    color: #c8a84b;
+    width: 22px;
+    text-align: center;
+  }
+
+  .back-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 0.5px solid rgba(10,34,64,0.25);
+    padding-top: 16px;
+  }
+
+  .back-election {
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    color: #0a2240;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  .back-qr {
+    width: 80px;
+    height: 80px;
+    opacity: 0.85;
+  }
+
+  /* Print styles */
+  @media print {
+    body {
+      background: white;
+      padding: 20px;
+    }
+    .instructions { display: none; }
+    h1 { display: none; }
+    .crop-wrap::before,
+    .crop-wrap::after,
+    .crop-wrap .cm-tr::before,
+    .crop-wrap .cm-tr::after,
+    .crop-wrap .cm-bl::before,
+    .crop-wrap .cm-bl::after,
+    .crop-wrap .cm-br::before,
+    .crop-wrap .cm-br::after {
+      background: #000;
+    }
+    .card-set {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="instructions">
+  <strong>How to print:</strong> Open in Chrome → File → Print → set paper to Letter, scale to 100%, enable "Background graphics" → Save as PDF or print directly.<br>
+  Cards are rendered at 2× screen resolution (672 × 384 px) representing 3.5″ × 2″ at 192 DPI. For professional printing at 300 DPI, send this HTML to your print shop or use the PDF.
+</div>
+
+<div class="card-set">
+
+  <div>
+    <p class="card-label">Front</p>
+    <div class="crop-wrap">
+      <span class="cm-tr"></span>
+      <span class="cm-bl"></span>
+      <span class="cm-br"></span>
+      <div class="card card-front">
+        <div class="front-vote">VOTE</div>
+        <div class="front-top">
+          <img class="front-photo" src="https://shaneryan1977.github.io/voteshane/pro2.png" alt="Shane Ryan">
+          <div class="front-name-block">
+            <div class="front-name">Shane Ryan</div>
+            <div class="front-title">CVRD Area A Director<br>Mill Bay / Malahat</div>
+          </div>
+        </div>
+        <div class="front-tagline-wrap">
+          <div class="front-tagline-main">Less is More.</div>
+          <div class="front-tagline-sub">Less taxes. Less red tape. More freedom. More transparency.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p class="card-label">Back</p>
+    <div class="crop-wrap">
+      <span class="cm-tr"></span>
+      <span class="cm-bl"></span>
+      <span class="cm-br"></span>
+      <div class="card card-back">
+        <div class="back-name">Shane Ryan</div>
+        <div class="back-sub">Candidate · Area A Director</div>
+        <div class="back-contact">
+          <div class="contact-row">
+            <span class="contact-icon">✉</span>
+            shane@shaneryan.ca
+          </div>
+          <div class="contact-row">
+            <span class="contact-icon">☎</span>
+            (778) 533-3204
+          </div>
+          <div class="contact-row">
+            <span class="contact-icon">🌐</span>
+            www.ShaneRyan.ca
+          </div>
+        </div>
+        <div class="back-footer">
+          <div class="back-election">
+            Election Day<br>Saturday, Oct 17, 2026
+          </div>
+          <img class="back-qr" src="https://shaneryan1977.github.io/voteshane/qr.png" alt="QR code">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
