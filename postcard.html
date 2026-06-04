@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shane Ryan – 6×9 Postcard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/*
+  6" × 9" @ 150 dpi = 900 × 1350 px
+  Print type sizing guide (@ 150 dpi):
+    10pt = 21px   ← absolute minimum (fine print only)
+    12pt = 25px   ← minimum body text
+    14pt = 29px   ← comfortable body for seniors
+    16pt = 33px   ← preferred body for seniors
+    18pt = 38px   ← large print standard
+    24pt = 50px   ← subheadings
+    36pt = 75px   ← headings
+    60pt = 125px  ← display / name
+*/
+
+:root {
+  --navy:   #1a2f4e;
+  --gold:   #c8982a;
+  --red:    #b52b2b;
+  --light:  #f4f1eb;
+  --white:  #ffffff;
+  --text:   #1e2a38;
+  --muted:  #3d4c5e;
+  --border: #d6cfc0;
+  --W: 900px;
+  --H: 1350px;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  padding: 56px 24px;
+  color: var(--text);
+}
+
+.page-label {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #444; margin-bottom: -44px;
+}
+
+/* ── CARD SHELL ── */
+.card {
+  width: var(--W);
+  height: var(--H);
+  overflow: hidden;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.14);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   FRONT
+══════════════════════════════════════ */
+.front { background: var(--light); }
+
+/* ── top ribbon ── */
+.front-header {
+  background: var(--navy);
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.front-header .election-line {
+  font-size: 26px; /* ~12.5pt */
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.80);
+}
+.front-header .date-pill {
+  background: var(--gold);
+  color: var(--white);
+  font-size: 24px; /* ~11.5pt */
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 4px;
+}
+
+/* ── VOTE banner ── */
+.vote-banner {
+  background: var(--red);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.vote-banner img { height: 64px; object-fit: contain; }
+
+/* ── name block ── */
+.name-block {
+  background: var(--navy);
+  text-align: center;
+  padding: 28px 40px 24px;
+  flex-shrink: 0;
+}
+.name-block h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 110px; /* ~52pt — massive, unmissable */
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.name-block .tagline {
+  font-size: 38px; /* ~18pt */
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 12px;
+}
+.name-block .tagline-sub {
+  font-size: 27px; /* ~13pt */
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.88);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.name-block::after {
+  content: '';
+  display: block;
+  width: 72px; height: 5px;
+  background: var(--gold);
+  margin: 16px auto 0;
+  border-radius: 3px;
+}
+
+/* ── photo + pillars row ── */
+.middle-row {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.photo-col {
+  width: 42%;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.photo-col img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.photo-col::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 60%, var(--light) 100%);
+}
+.photo-caption {
+  position: absolute;
+  bottom: 14px; left: 0; right: 0;
+  text-align: center;
+  font-size: 22px; /* ~10.5pt */
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+   color: #ffffff;
+  background: rgba(26, 47, 78, 0.82); /* navy at 82% opacity */
+  padding: 8px 12px;
+  text-shadow: none;
+  z-index: 1;
+}
+
+.pillars-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 32px 18px 14px;
+  gap: 0;
+}
+.pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pillar:last-child { border-bottom: none; }
+.pillar-icon { font-size: 30px; flex-shrink: 0; width: 36px; margin-top: 2px; }
+.pillar-title {
+  font-size: 26px; /* ~12.5pt */
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.pillar-desc {
+  font-size: 24px; /* ~11.5pt — MINIMUM for senior body text */
+  color: var(--muted);
+  line-height: 1.38;
+  font-weight: 500;
+}
+
+/* ── tax banner ── */
+.tax-banner {
+  background: var(--navy);
+  margin: 0 32px 0;
+  border-radius: 6px 6px 0 0;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+.tax-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px; /* ~21pt */
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  white-space: nowrap;
+}
+.tax-desc {
+  font-size: 25px; /* ~12pt */
+  color: rgba(255,255,255,0.92);
+  line-height: 1.45;
+  font-weight: 500;
+}
+.tax-desc strong {
+  display: block;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+
+/* ── front footer ── */
+.front-footer {
+  background: var(--gold);
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.front-footer .url {
+  font-size: 32px; /* ~15pt — very readable */
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.04em;
+}
+.front-footer .election-info {
+  font-size: 26px; /* ~12.5pt */
+  font-weight: 600;
+  color: var(--navy);
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════
+   BACK
+══════════════════════════════════════ */
+.back { background: var(--white); }
+
+/* Full-width navy header */
+.back-header {
+  background: var(--navy);
+  padding: 22px 40px 18px;
+  flex-shrink: 0;
+  position: relative;
+}
+.back-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 68px; /* ~32pt */
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+.back-header .subtitle {
+  font-size: 26px; /* ~12.5pt */
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 6px;
+}
+.back-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 40px;
+  width: 60px; height: 5px;
+  background: var(--gold);
+  border-radius: 3px 3px 0 0;
+}
+
+.header-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+/* Section label used throughout */
+.section-label {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+/* ── Two-column body: left = text, right = photo ── */
+.back-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* LEFT: stacked text content */
+.back-left {
+  width: 52%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* RIGHT: photo fills full height, no cropping */
+.back-right {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--light);
+}
+.family-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top; /* show faces at top */
+  display: block;
+}
+
+/* About */
+.about-section {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.about-section p {
+  font-size: 26px; /* ~12.5pt */
+  line-height: 1.6;
+  color: var(--text);
+}
+.about-section p strong { color: var(--navy); font-weight: 700; }
+
+/* Track record — stacked list in left col */
+.track-section {
+  padding: 16px 28px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.track-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+.track-item:last-child { border-bottom: none; }
+.track-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+.track-title {
+  font-size: 24px; /* ~11.5pt */
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+.track-desc {
+  font-size: 22px; /* ~10.5pt */
+  color: var(--muted);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Contact */
+.contact-section {
+  padding: 16px 28px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px; /* ~12.5pt */
+  color: var(--text);
+  font-weight: 600;
+  margin-top: 8px;
+}
+.contact-item .ci { font-size: 24px; }
+
+/* Priorities — bottom of left col */
+.priorities-section {
+  padding: 14px 28px 14px;
+  flex: 1;
+}
+.priority-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+}
+.tag {
+  font-size: 20px; /* ~9.5pt */
+  font-weight: 700;
+  color: var(--navy);
+  border: 2.5px solid var(--navy);
+  border-radius: 3px;
+  padding: 5px 12px;
+  letter-spacing: 0.04em;
+}
+
+/* Footer */
+.back-footer {
+  background: var(--light);
+  padding: 10px 40px;
+  font-size: 18px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<p class="page-label">Front 6 × 9 inch</p>
+
+<!-- ══════ FRONT ══════ -->
+<div class="card front">
+
+  <div class="front-header">
+    <span class="election-line">CVRD Mill Bay/Malahat Director</span>
+    <span class="date-pill">Saturday October 17, 2026</span>
+  </div>
+
+  <div class="vote-banner">
+    <img src="VOTE.png" alt="Vote Shane Ryan">
+  </div>
+
+  <div class="name-block">
+    <h2>SHANE RYAN</h2>
+    <div class="tagline">Less is More.</div>
+    <div class="tagline-sub">Less taxes. Less red tape. More transparency.</div>
+  </div>
+
+  <div class="middle-row">
+    <div class="photo-col">
+      <img src="pro2.png" alt="Shane Ryan">
+      <!--<div class="photo-caption">Mill Bay / Malahat Area Director</div>-->
+    </div>
+    <div class="pillars-col">
+      <div class="pillar">
+        <div class="pillar-icon">🔍</div>
+        <div>
+          <div class="pillar-title">Transparency</div>
+          <div class="pillar-desc">Monthly public meetings. Better CVRD communication. Evening board meetings.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">💰</div>
+        <div>
+          <div class="pillar-title">Taxes</div>
+          <div class="pillar-desc">I have a plan to slow tax growth and get you more value for your money.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">🏠</div>
+        <div>
+          <div class="pillar-title">Development</div>
+          <div class="pillar-desc">Focus more on senior downsizing options. Fight to include medical centres in new developments.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">✂️</div>
+        <div>
+          <div class="pillar-title">Red Tape & Overreach</div>
+          <div class="pillar-desc">Remove bylaws that impact food, housing security and our rural lifestyle.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tax-banner">
+    <div class="tax-number">40% Tax Increase</div>
+    <div class="tax-desc">
+      <strong>Growing Twice As Fast As Inflation</strong>
+      The last four years have seen the CVRD grow faster than ever.
+    </div>
+  </div>
+
+  <div class="front-footer">
+    <span class="url">ShaneRyan.ca</span>
+    <span class="election-info">Election Day is Saturday Oct 17, 2026</span>
+  </div>
+
+</div>
+
+<p class="page-label">Back 6 × 9 inch</p>
+
+<!-- ══════ BACK ══════ -->
+<div class="card back">
+
+  <div class="back-header">
+    <h2>Shane Ryan</h2>
+    <div class="subtitle">Working for you - Mill Bay Malahat Director</div>
+  </div>
+
+  <div class="back-body">
+
+    <!-- LEFT: all text content -->
+    <div class="back-left">
+
+      <div class="about-section">
+        <div class="section-label">About Shane</div>
+        <p>Shane Ryan, 49, is a <strong>Mill Bay/Malahat resident, small business owner,</strong> and former CVRD Alternate Director. He lives with his wife Christine and daughter Elizabeth. Previously in private-sector finance, Shane now runs a software consulting company.</p>
+      </div>
+
+      <div class="track-section">
+        <div class="section-label">Proven Community Track Record</div>
+        <div class="track-item">
+          <div class="track-dot"></div>
+          <div>
+            <div class="track-title">Opposed Pay Hikes During COVID</div>
+            <div class="track-desc">Voted against 30% CVRD pay increases at the height of COVID.</div>
+          </div>
+        </div>
+        <div class="track-item">
+          <div class="track-dot"></div>
+          <div>
+            <div class="track-title">52 Affordable Senior Housing Units</div>
+            <div class="track-desc">Facilitating project as Community League President in Mill Bay Village with non-profit partner.</div>
+          </div>
+        </div>
+        <div class="track-item">
+          <div class="track-dot"></div>
+          <div>
+            <div class="track-title">5 Years as Community League President</div>
+            <div class="track-desc">Raised thousands for CMS Foodbank &amp; Francis Kelsey lunch program & other local causes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <div class="section-label">Get In Touch</div>
+        <div class="contact-item"><span class="ci">✉</span> shane@shaneryan.ca</div>
+        <div class="contact-item"><span class="ci">☎</span> (778) 533-3204</div>
+        <div class="contact-item"><span class="ci">🌐</span> ShaneRyan.ca</div>
+      </div>
+
+     <!-- <div class="priorities-section">
+        <div class="section-label">Priorities</div>
+        <div class="priority-tags">
+          <span class="tag">Lower Taxes</span>
+          <span class="tag">Transparency</span>
+          <span class="tag">Senior Housing</span>
+          <span class="tag">Local Jobs</span>
+          <span class="tag">Less Red Tape</span>
+          <span class="tag">Community</span>
+          <span class="tag">Smaller Govt</span>
+          <span class="tag">Environment</span>
+          <span class="tag">No to 4710</span>
+          <span class="tag">Transportation</span>
+        </div>
+      </div>-->
+
+    </div><!-- /back-left -->
+
+    <!-- RIGHT: full-height family photo -->
+    <div class="back-right">
+      <img class="family-photo" src="family2.jpg" alt="Shane Ryan with family">
+    </div>
+
+  </div><!-- /back-body -->
+
+  <div class="back-footer">
+    Authorized by Louise Patterson, financial agent for the Shane Ryan Campaign. shane@shaneryan.ca | (236) 562-8904
+  </div>
+
+</div>
+
+</body>
+</html>
