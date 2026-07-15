@@ -19,6 +19,7 @@
     --gold: #c9a227;
     --text-dark: #1a1a1a;
     --text-mid: #3a3a3a;
+    --facebook-blue: #1877F2
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,7 +119,7 @@
   }
 
   .hero-tagline {
-    font-size: 1.18rem;
+    font-size: 2rem;
     color: rgba(247,244,238,0.85);
     line-height: 1.65;
     max-width: 400px;
@@ -147,6 +148,25 @@
     animation: fadeUp 0.7s 0.85s forwards;
     width: fit-content;
   }
+
+  .hero-facebook {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: var(--facebook-blue);
+    color: var(--warm-white);
+    padding: 0.9rem 2.2rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.85s forwards;
+    width: fit-content;
+  }
+
   .hero-cta:hover { background: #e0b52a; transform: translateY(-2px); }
 
   .hero-right {
@@ -171,7 +191,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    animation: fadeIn 1s 0.5s forwards;
+    animation: fadeIn 10s 0.5s forwards;
   }
 
   .hero-photo-overlay {
@@ -475,6 +495,7 @@
     max-width: 680px; margin: 0 auto;
     text-align: center;
   }
+
   .signup .section-label { color: var(--mint); }
   .signup .section-title { color: var(--cream); }
   .signup-text {
@@ -724,9 +745,13 @@
     <p class="hero-eyebrow">Cowichan Valley Regional District · Mill Bay/Malahat</p>
     <h1 class="hero-name">Shane<br><span style="color:#c9a227;">Ryan</span></h1>
     <p class="hero-title">Candidate for Director — Mill Bay / Malahat Area A</p>
-    <p class="hero-tagline"><strong>Less is More</strong>. Less taxes. Less red-tape. More freedom. More transparency and accountability.</p>
+    <p class="hero-tagline"><strong>Less is More</strong>.<br> Less taxes. More transparency.</p>
     <a href="#signup" class="hero-cta">
       <span>Join the Campaign</span>
+      <span>→</span>
+    </a>
+    <a href="https://www.facebook.com/voteshaneryan" class="hero-facebook">
+      <span>Follow me on Facebook</span>
       <span>→</span>
     </a>
   </div>
@@ -742,7 +767,7 @@
 </section>
 
 <!-- STATS BAR -->
-<div class="stats-bar">
+<!--<div class="stats-bar">
   <div class="stat-item">
     <span class="stat-num">5+</span>
     <span class="stat-label">Years Community League President</span>
@@ -762,50 +787,48 @@
     <span class="stat-num">0 %</span>
     <span class="stat-label">Fought against Director Pay Increase During COVID</span>
   </div>
-</div>
+</div>-->
 
 <!-- PRIORITIES -->
 <section class="priorities" id="priorities">
   <div class="container">
+
     <p class="section-label">Platform</p>
     <h2 class="section-title">Priorities for <span class="accent">Mill Bay Malahat (Area A)</span></h2>
-    <p class="priorities-intro"><i>Vote for me because I'll put residents first—not bureaucracy.</i><br><br>Vote for me because I bring both real experience and a fresh perspective. During COVID, I served as an Alternate Director at the CVRD and saw firsthand how decisions were being made and where accountability was lacking. As a small business owner, I understand the pressure families and local businesses face from rising taxes, regulations, and red tape. I'll fight for responsible spending, greater transparency, and policies that protect freedom, support residents, and keep our government focused on serving the community.<br><br>My slogan is simple: <strong>Less is More</strong>: Less taxes. Less red tape. More freedom. More accountability.</p>
-
+    <p class="priorities-intro"><i>Vote for me because I'll put residents first—not bureaucracy.</i><br><br>Vote for me because I bring both real experience and a fresh perspective. During COVID, I served as an Alternate Director at the CVRD and saw firsthand how decisions were being made and where accountability was lacking. As a small business owner, I understand the pressure families and local businesses face from rising taxes, regulations, and red tape. I'll fight for responsible spending, greater transparency, and policies that protect freedom, support residents, and keep our government focused on serving the community.<br><br>My slogan is simple: <strong>Less is More</strong>: Less taxes. More Transparency.</p>
     <div class="priorities-grid">
       <div class="priority-card">
         <div class="priority-icon">💰</div>
         <h3 class="priority-title">Rein In Spending</h3>
-        <p class="priority-text">Property taxes have increased <strong>40%</strong> since the current Director took office. I will fight out-of-control spending, demand accountability, and restore fiscal responsibility to the CVRD.</p>
+        <p class="priority-text">Property taxes have increased <strong>40%</strong> in the last four years. I will fight out-of-control spending, demand accountability, and restore fiscal responsibility to the CVRD.</p>
+        <p class="priority-text"><br> <B>Budgetary Limits</B><BR> As Alternate Director during COVID, I sat through the budget meetings and saw staff run circles around the directors. Directors need to set firm spending caps on new budgets.</p>
+        <p class="priority-text"><br> <B>Reduce Administration Overheads</B> <BR> The CVRD spends literally 10 times as much (20% vs 2%) as our neighbours the Regional District of Nanaimo (RDN - not to be confused with the city of Nanaimo) on administration (management, consulting, etc.). The RDN has spent many years focused on reining in administrative overheads. If they can do it so can we.</p>
       </div>
       <div class="priority-card">
         <div class="priority-icon">🌲</div>
         <h3 class="priority-title">Wildfire &amp; Watershed Resilience</h3>
-        <p class="priority-text">Living on the Malahat Mountain, I understand first-hand the importance of proactive wildfire preparedness and protecting our watershed for long-term community safety.</p>
-      </div>
-      <div class="priority-card">
-        <div class="priority-icon">🏠</div>
-        <h3 class="priority-title">Seniors Housing</h3>
-        <p class="priority-text">I am currently facilitating a 52-unit affordable housing project for seniors in Mill Bay Village. I will continue to champion expanded housing options and services for seniors across Mill Bay/Malahat.</p>
+        <p class="priority-text">Living on the Malahat Mountain, I understand first-hand the importance of proactive wildfire preparedness and protecting our watershed for long-term community safety. Protecting our forests and aquifers is critical to the future of Mill Bay/Malahat. We must invest in wildfire prevention, emergency preparedness, and responsible land management while safeguarding our drinking water sources. Smart planning today will help protect our communities, environment, and water security for future generations.</p>
       </div>
       <div class="priority-card">
         <div class="priority-icon">🚌</div>
         <h3 class="priority-title">Transportation</h3>
-        <p class="priority-text">Improved transportation connections are essential for a growing community. I will advocate for bus stops for underserved communities such as the Spectacle Lake Mobile Home Park.</p>
+        <p class="priority-text">Improved transportation connections are essential for a growing community. While the CVRD doesn't directly administer it's roads or buses. I will fiercely advocate for better service and if needed go to the media when the Ministry of Transportation or BC Transit fail in their duties. </p>
+        <p class="priority-text"><br><B>Bus Stops</B><br> I will advocate for bus stops for underserved communities such as the Spectacle Lake Mobile Home Park.</p>
+        <p class="priority-text"><br><B>Pot Holes</B><BR>We all know of potholes and road deficiencies that have gone unaddressed for far too long. I will advocate for timely repairs and hold the Ministry of Transportation accountable for maintaining safe roads in our community. I will work with community partners to find solutions and keep pressure on the Province to address long-standing infrastructure issues.</p>
+        <p class="priority-text"><br><B>Snow Plowing</B><BR>Getting to work, school, and medical appointments is not optional. I will push the Ministry of Transportation to better prepare for the winter weather events that occur every year.</p>
       </div>
       <div class="priority-card">
         <div class="priority-icon">🔍</div>
         <h3 class="priority-title">Transparency &amp; Accountability</h3>
-        <p class="priority-text">I will hold the CVRD accountable with full transparency, asking the hard questions and demanding clear answers on behalf of every Mill Bay/Malahat resident.</p>
+        <p class="priority-text"><b>Evening Meetings</b><br>I will push to move CVRD meetings back to the evenings, making them easier for residents to attend and participate in. CVRD meetings were held in the evenings until 2012, and many local governments, including the City of Victoria, continue to meet outside regular working hours.<br><br>A practical solution is to adjust the schedules of staff who must attend, avoiding overtime costs. Evening meetings would also make serving as a Director more accessible to working people without increasing Director compensation.</p>
+        <p class="priority-text"><br><b>Everything On Youtube</b><br>Many CVRD meetings are not currently available on YouTube. I will push for all CVRD meetings, including Area Planning Committees, public input sessions, and workshops, to be recorded and published by default.<br><br>Making meetings publicly accessible is simple and inexpensive. Decisions that affect residents should be open, searchable, and easy to review. The public should not have to rely on rumours or second hand information to understand decisions that impact their community.</p>
+
       </div>
       <div class="priority-card">
         <div class="priority-icon">🛠️</div>
         <h3 class="priority-title">Small Business &amp; Jobs</h3>
         <p class="priority-text">As an experienced entrepreneur, I will cut red tape to create opportunities for small businesses to ensure that our kids and young families have good local jobs here in Mill Bay/Malahat.</p>
-      </div>
-      <div class="priority-card">
-        <div class="priority-icon">🌲️</div>
-        <h3 class="priority-title">Parks</h3>
-        <p class="priority-text">Parks are an essential part of what makes our community so liveable. I will advocate for more playgrounds for children as this is something we're shockingly deficient in.</p>
+        <p class="priority-text"><BR> <B>Streamlined Temporary Use Permits (TUP)</B> <BR>I will continue to push for a simpler, faster Temporary Use Permit process. Current CVRD procedures can take months or even years and cost small businesses thousands of dollars in fees. Temporary Use Permits help businesses such as short term rentals, food trucks, and daycares operate while rezoning is underway. Small businesses need a streamlined, affordable process that supports local entrepreneurship, not unnecessary red tape.</p>
       </div>
     </div>
   </div>
@@ -819,14 +842,14 @@
         <p class="section-label">The Numbers Don't Lie</p>
         <h2 class="section-title">Taxes Are Out of Control</h2>
         <span class="tax-stat">40%</span>
-        <span class="tax-stat-label">Property Tax Increase Under Current Director</span>
-        <p>Since the current Director took office, average property taxes in Mill Bay/Malahat have skyrocketed from roughly $3,950 in 2022 to nearly $5,800 in 2025. That's an unacceptable burden on Mill Bay/Malahat families.</p>
+        <span class="tax-stat-label">Property Tax Increase In the Last Four Years</span>
+        <p>In the last four years, average property taxes in Mill Bay/Malahat have skyrocketed from roughly $3,950 in 2022 to nearly $5,800 in 2025. These increases are happening at twice the rate of inflation. That's an unacceptable burden on Mill Bay/Malahat families.</p>
         <p>I bring the fiscal discipline and accountability needed to reverse this trend and fight for every dollar of taxpayer money.</p>
       </div>
       <div class="chart-wrapper">
         <p class="chart-title">Average Property Tax — Mill Bay</p>
-        <img src="taxes.png" alt="Average Property Tax Mill Bay chart showing increases under current Director" class="chart-img">
-        <p class="chart-caption">Source: CVRD Property Tax Data · Blue = Previous Director · Red = Current Director</p>
+        <img src="taxes.png" alt="Average Property Tax Mill Bay chart showing increases in the last Four Years" class="chart-img">
+        <p class="chart-caption">Source: CVRD Property Tax Data · Blue = Previous Director · Red = Last Four Years</p>
       </div>
     </div>
   </div>
@@ -859,10 +882,6 @@
         <p class="record-year">Mill Bay Community League President</p>
         <p class="record-desc"><strong style="color:var(--gold)">5 Years of Service</strong> Raised thousands for the CMS Foodbank, the Francis Kelsey lunch program, and local community initiatives.</p>
       </div>
-      <div class="record-item">
-        <p class="record-year">Active Today</p>
-        <p class="record-desc"><strong style="color:var(--gold)">52 Housing Units</strong> Currently facilitating a 52-unit affordable seniors housing project in Mill Bay Village with a non-profit partner.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -872,7 +891,7 @@
   <div class="container">
     <div class="about-layout">
       <div class="about-photo-wrap">
-        <img src="pro.jpg" alt="Shane Ryan" class="about-photo">
+        <img src="ken and shane.jpg" alt="Shane Ryan" class="about-photo">
         <div class="about-photo-label">Shane Ryan · Mill Bay/Malahat Resident</div>
       </div>
       <div class="about-copy">
@@ -910,12 +929,11 @@
           <span class="pill">Small Business Job Creation</span>
           <span class="pill">CMS Food Bank</span>
           <span class="pill">Francis Kelsey Lunch Program</span>
-          <span class="pill">Off-Grid Living</span>
           <span class="pill">CVRD Accountability</span>
           <span class="pill">Lower Taxes</span>
         </div>
       </div>
-      <img src="family.jpg" alt="Shane Ryan with family" class="family-photo">
+      <img src="family2.jpg" alt="Shane Ryan with family" class="family-photo">
     </div>
   </div>
 </section>
@@ -938,7 +956,6 @@
       <p class="signup-note">No spam. Unsubscribe anytime. Your information stays private.</p>
     </div>
   </div>
-
   <div class="cta-container">
     <a class="cta-button donate" href="https://donate.stripe.com/fZudRb51f2BQc1nabB5EY00" target="_blank">
       DONATE
@@ -978,7 +995,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>Authorized by Shane Ryan Campaign · Mill Bay/Malahat Area A Director Candidate · <a href="mailto:shane@shaneryan.ca">shane@shaneryan.ca</a> · <a href="http://www.ShaneRyan.ca">ShaneRyan.ca</a></p>
+    Authorized by Louise Patterson, financial agent for the Shane Ryan Campaign. louise_korea@yahoo.ca | (236) 562-8904
 </footer>
 
 <script>
@@ -1026,7 +1043,7 @@
   document.querySelectorAll('.priority-card, .record-item, .highlight-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.5s, transform 0.5s';
+    el.style.transition = 'opacity 1.5s, transform 0.5s';
     observer.observe(el);
   });
 </script>
