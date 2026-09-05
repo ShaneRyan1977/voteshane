@@ -32,9 +32,21 @@ function loadDemo(){
   }catch{}
 }
 function saveDemo(){localStorage.setItem(key(),JSON.stringify(Object.fromEntries(state)))}
+function normalizeVoterOverrides(value){
+  if(!value || typeof value!=='object' || Array.isArray(value))return {};
+  const out={};
+  Object.entries(value).forEach(([k,list])=>{
+    if(!Array.isArray(list))return;
+    out[k]=list.map(person=>({
+      given:String(person?.given??'').trim(),
+      last:String(person?.last??'').trim()
+    })).filter(person=>person.given||person.last);
+  });
+  return out;
+}
 function normalizeRow(row={}){
   const status=row.status==='claimed'?'reachout':row.status;
-  return {...row,status:STATUS_META[status]?status:'unvisited',phone:row.phone||'',email:row.email||''};
+  return {...row,status:STATUS_META[status]?status:'unvisited',phone:row.phone||'',email:row.email||'',voter_names:normalizeVoterOverrides(row.voter_names)};
 }
 function statusFor(id){return normalizeRow(state.get(id)||{status:'unvisited'})}
 function styleFeature(f){
@@ -66,11 +78,19 @@ async function saveRow(id,row){
     refresh();
     return true;
   }
-  const payload={parcel_id:id,status:clean.status,phone:clean.phone||null,email:clean.email||null,updated_at:clean.updated_at};
-  const {error}=await supa.from('canvass_status').upsert(payload,{onConflict:'parcel_id'});
-  if(error){toast(error.message);return false}
+  const previous=state.has(id)?state.get(id):null;
+  // Update local state first so a rapid name edit + status/phone action cannot
+  // overwrite the newer voter-name data while the Supabase request is in flight.
   state.set(id,clean);
   refresh();
+  const payload={parcel_id:id,status:clean.status,phone:clean.phone||null,email:clean.email||null,voter_names:clean.voter_names||{},updated_at:clean.updated_at};
+  const {error}=await supa.from('canvass_status').upsert(payload,{onConflict:'parcel_id'});
+  if(error){
+    if(previous)state.set(id,previous);else state.delete(id);
+    refresh();
+    toast(error.message);
+    return false;
+  }
   return true;
 }
 
@@ -196,20 +216,65 @@ async function findAddressesForParcel(f){
   }catch(e){return []}
 }
 
-function voterNamesHtml(names){
-  if(!names.length)return '<div class="no-voters">No matching voter names in the supplied spreadsheet.</div>';
-  const rows=names.map(person=>`<div class="voter-name"><b>${escapeHtml(person.last)}</b>, ${escapeHtml(person.given)}</div>`).join('');
-  return `<div class="voter-label">Voter name${names.length===1?'':'s'} (${names.length})</div><div class="voter-list">${rows}</div>`;
+function voterOverrideForAddress(parcelId,key,spreadsheetNames){
+  const row=statusFor(parcelId);
+  if(Object.prototype.hasOwnProperty.call(row.voter_names||{},key))return row.voter_names[key];
+  return spreadsheetNames;
 }
-function addressHtml(addrs){
+function voterPairHtml(person={given:'',last:''}){
+  return `<div class="voter-pair">
+    <label>Given Names<input class="voter-given" type="text" autocomplete="off" value="${escapeHtml(person.given||'')}"></label>
+    <label>Last Name<input class="voter-last" type="text" autocomplete="off" value="${escapeHtml(person.last||'')}"></label>
+    <button type="button" class="remove-voter" aria-label="Remove voter name">Remove</button>
+  </div>`;
+}
+function voterEditorHtml(key,names){
+  const rows=names.length?names.map(voterPairHtml).join(''):'<div class="no-voters">No voter names saved for this address.</div>';
+  return `<div class="voter-editor" data-voter-key="${escapeHtml(key)}">
+    <div class="voter-label">Given Names + Last Name <span class="voter-count">(${names.length})</span></div>
+    <div class="voter-pairs">${rows}</div>
+    <button type="button" class="add-voter">+ Add name</button>
+  </div>`;
+}
+function addressHtml(addrs,parcelId){
   if(!addrs.length)return '<div class="muted">No civic address found in CVRD AddressBC for this property.</div>';
   const groups=new Map();
   addrs.forEach(a=>{
     const k=matchedVoterKey(a)||addressKey(a);
-    if(!groups.has(k))groups.set(k,{address:baseAddress(a),names:namesForAddress(a)});
+    if(!groups.has(k)){
+      const spreadsheetNames=namesForAddress(a);
+      groups.set(k,{key:k,address:baseAddress(a),names:voterOverrideForAddress(parcelId,k,spreadsheetNames)});
+    }
   });
-  return [...groups.values()].map(group=>`<section class="address-group"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterNamesHtml(group.names)}</section>`).join('');
+  return [...groups.values()].map(group=>`<section class="address-group"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
 }
+function collectVoterPairs(editor){
+  return [...editor.querySelectorAll('.voter-pair')].map(pair=>({
+    given:pair.querySelector('.voter-given')?.value.trim()||'',
+    last:pair.querySelector('.voter-last')?.value.trim()||''
+  })).filter(person=>person.given||person.last);
+}
+function updateVoterEditorDisplay(editor){
+  const pairs=editor.querySelector('.voter-pairs');
+  const count=editor.querySelector('.voter-count');
+  const rows=editor.querySelectorAll('.voter-pair');
+  if(count)count.textContent=`(${rows.length})`;
+  if(pairs && rows.length===0 && !pairs.querySelector('.no-voters'))pairs.innerHTML='<div class="no-voters">No voter names saved for this address.</div>';
+  if(pairs && rows.length>0)pairs.querySelector('.no-voters')?.remove();
+}
+async function saveVoterEditor(editor){
+  if(!selected||!editor)return false;
+  const parcelId=selected.properties.ParcelID;
+  const addressKeyValue=editor.dataset.voterKey;
+  const current=statusFor(parcelId);
+  const voter_names={...(current.voter_names||{})};
+  voter_names[addressKeyValue]=collectVoterPairs(editor);
+  const row={...current,voter_names,phone:$('phone').value.trim(),email:$('email').value.trim()};
+  const ok=await saveRow(parcelId,row);
+  if(ok)toast('Voter names saved');
+  return ok;
+}
+
 function statusText(s){
   const meta=STATUS_META[s.status];
   if(!meta)return 'Unmarked';
@@ -222,22 +287,40 @@ function updateActiveButton(status){
   if(id)$(id).classList.add('active');
 }
 
+let viewportSyncFrame=0;
 function syncPanelToViewport(){
-  const panel=$('panel');
-  if(!panel||panel.classList.contains('hidden'))return;
-  if(window.matchMedia('(min-width:800px)').matches){
-    panel.style.top='';panel.style.bottom='';panel.style.left='';panel.style.right='';panel.style.maxHeight='';
-    return;
-  }
-  const vv=window.visualViewport;
-  const offsetTop=vv?vv.offsetTop:0;
-  const height=vv?vv.height:window.innerHeight;
-  const margin=8;
-  panel.style.left=`${margin}px`;
-  panel.style.right=`${margin}px`;
-  panel.style.top=`${Math.max(margin,offsetTop+margin)}px`;
-  panel.style.bottom='auto';
-  panel.style.maxHeight=`${Math.max(220,height-(margin*2))}px`;
+  cancelAnimationFrame(viewportSyncFrame);
+  viewportSyncFrame=requestAnimationFrame(()=>{
+    const panel=$('panel');
+    if(!panel||panel.classList.contains('hidden'))return;
+    if(window.matchMedia('(min-width:800px)').matches){
+      ['top','left','right','bottom','width','height','maxHeight'].forEach(prop=>panel.style[prop]='');
+      return;
+    }
+    const vv=window.visualViewport;
+    const top=Math.max(0,vv?.offsetTop||0);
+    const left=Math.max(0,vv?.offsetLeft||0);
+    const width=Math.max(280,vv?.width||window.innerWidth);
+    const height=Math.max(260,vv?.height||window.innerHeight);
+    panel.style.top=`${top}px`;
+    panel.style.left=`${left}px`;
+    panel.style.right='auto';
+    panel.style.bottom='auto';
+    panel.style.width=`${width}px`;
+    panel.style.height=`${height}px`;
+    panel.style.maxHeight=`${height}px`;
+  });
+}
+function keepFieldVisible(target){
+  const scroller=$('panelScroll');
+  if(!scroller||!target||!scroller.contains(target))return;
+  requestAnimationFrame(()=>{
+    const r=target.getBoundingClientRect();
+    const s=scroller.getBoundingClientRect();
+    const pad=18;
+    if(r.bottom>s.bottom-pad)scroller.scrollTop+=r.bottom-(s.bottom-pad);
+    else if(r.top<s.top+pad)scroller.scrollTop-=s.top+pad-r.top;
+  });
 }
 
 window.selectParcel=id=>{
@@ -260,7 +343,7 @@ async function openSelected(lookupAddress=true){
   const selectedId=p.ParcelID;
   const addrs=await findAddressesForParcel(selected);
   if(!selected || selected.properties.ParcelID!==selectedId)return;
-  $('parcelInfo').innerHTML=addressHtml(addrs);
+  $('parcelInfo').innerHTML=addressHtml(addrs,selectedId);
   requestAnimationFrame(syncPanelToViewport);
 }
 
@@ -334,17 +417,52 @@ $('email').addEventListener('change',queueContactSave);
 $('panel').addEventListener('focusin',event=>{
   setTimeout(()=>{
     syncPanelToViewport();
-    if(event.target instanceof HTMLElement)event.target.scrollIntoView({block:'center',behavior:'smooth'});
-  },100);
+    if(event.target instanceof HTMLElement)keepFieldVisible(event.target);
+  },80);
+  setTimeout(()=>{
+    syncPanelToViewport();
+    if(event.target instanceof HTMLElement)keepFieldVisible(event.target);
+  },320);
+});
+$('parcelInfo').addEventListener('click',async event=>{
+  const editor=event.target.closest('.voter-editor');
+  if(!editor)return;
+  if(event.target.closest('.add-voter')){
+    const pairs=editor.querySelector('.voter-pairs');
+    pairs.querySelector('.no-voters')?.remove();
+    pairs.insertAdjacentHTML('beforeend',voterPairHtml());
+    updateVoterEditorDisplay(editor);
+    const added=[...editor.querySelectorAll('.voter-pair')].at(-1);
+    added?.querySelector('.voter-given')?.focus();
+    keepFieldVisible(added?.querySelector('.voter-given'));
+    return;
+  }
+  const remove=event.target.closest('.remove-voter');
+  if(remove){
+    remove.closest('.voter-pair')?.remove();
+    updateVoterEditorDisplay(editor);
+    await saveVoterEditor(editor);
+  }
+});
+$('parcelInfo').addEventListener('change',event=>{
+  if(!event.target.matches('.voter-given,.voter-last'))return;
+  const editor=event.target.closest('.voter-editor');
+  if(editor)saveVoterEditor(editor);
 });
 $('locate').onclick=()=>map.locate({setView:true,maxZoom:17});
 
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',syncPanelToViewport);
-  window.visualViewport.addEventListener('scroll',syncPanelToViewport);
+function syncViewportAndFocus(){
+  syncPanelToViewport();
+  setTimeout(()=>{
+    if(document.activeElement instanceof HTMLElement && $('panel').contains(document.activeElement))keepFieldVisible(document.activeElement);
+  },60);
 }
-window.addEventListener('resize',syncPanelToViewport);
-window.addEventListener('orientationchange',()=>setTimeout(syncPanelToViewport,150));
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',syncViewportAndFocus);
+  window.visualViewport.addEventListener('scroll',syncViewportAndFocus);
+}
+window.addEventListener('resize',syncViewportAndFocus);
+window.addEventListener('orientationchange',()=>setTimeout(syncViewportAndFocus,150));
 
 let searchTimer;
 $('search').addEventListener('input',e=>{

@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <title>Area A Canvass Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <div id="app">
@@ -36,27 +36,29 @@
   <div id="map"></div>
   <div id="toast"></div>
 
-  <div id="panel" class="hidden">
-    <div class="panel-topbar"><button id="closePanel" class="close" aria-label="Close">×</button></div>
-    <div id="parcelInfo"></div>
+  <div id="panel" class="hidden" role="dialog" aria-modal="true" aria-label="Property details">
+    <div class="panel-topbar"><strong>Property</strong><button id="closePanel" class="close" aria-label="Close">×</button></div>
+    <div id="panelScroll" class="panel-scroll">
+      <div id="parcelInfo"></div>
 
-    <label>Phone number
-      <input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number">
-    </label>
+      <label>Phone number
+        <input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number">
+      </label>
 
-    <label>Email
-      <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address">
-    </label>
+      <label>Email
+        <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address">
+      </label>
 
-    <div class="actions status-actions">
-      <button id="supporter" class="status-button supporter-button">Supporter</button>
-      <button id="visit" class="status-button visited-button">Visited</button>
-      <button id="reachout" class="status-button reachout-button">Reach out</button>
-      <button id="against" class="status-button against-button">Against</button>
+      <div class="actions status-actions">
+        <button id="supporter" class="status-button supporter-button">Supporter</button>
+        <button id="visit" class="status-button visited-button">Visited</button>
+        <button id="reachout" class="status-button reachout-button">Reach out</button>
+        <button id="against" class="status-button against-button">Against</button>
+      </div>
+
+      <button id="clearStatus" class="clear-status-button">Clear category</button>
+      <div id="currentStatus" class="status"></div>
     </div>
-
-    <button id="clearStatus" class="clear-status-button">Clear category</button>
-    <div id="currentStatus" class="status"></div>
   </div>
 
   <div id="setup" class="modal">
@@ -67,14 +69,14 @@
       <label>Supabase anon key<input id="sbKey" placeholder="eyJ…"></label>
       <button id="saveSetup" class="primary full">Connect</button>
       <button id="demoMode" class="secondary full">Use demo mode (this device only)</button>
-      <p class="small">Phone, email and canvassing status can be stored with each property. Secure the shared database appropriately and follow applicable privacy and election rules.</p>
+      <p class="small">Phone, email, canvassing status and voter-name edits can be stored with each property. Secure the shared database appropriately and follow applicable privacy and election rules.</p>
     </div>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 <script>
 if ("serviceWorker" in navigator) {
   const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -82,7 +84,7 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister()));
     if ("caches" in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   } else {
-    navigator.serviceWorker.register("sw.js?v=6").then(reg => reg.update()).catch(() => {});
+    navigator.serviceWorker.register("sw.js?v=7").then(reg => reg.update()).catch(() => {});
   }
 }
 </script>

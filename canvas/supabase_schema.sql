@@ -7,6 +7,7 @@ create table if not exists public.canvass_status (
   "user" text,
   phone text,
   email text,
+  voter_names jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
 
@@ -15,6 +16,10 @@ alter table public.canvass_status drop constraint if exists canvass_status_statu
 alter table public.canvass_status alter column "user" drop not null;
 alter table public.canvass_status add column if not exists phone text;
 alter table public.canvass_status add column if not exists email text;
+alter table public.canvass_status add column if not exists voter_names jsonb default '{}'::jsonb;
+update public.canvass_status set voter_names='{}'::jsonb where voter_names is null;
+alter table public.canvass_status alter column voter_names set default '{}'::jsonb;
+alter table public.canvass_status alter column voter_names set not null;
 update public.canvass_status set status='reachout' where status='claimed';
 update public.canvass_status set status='unvisited' where status is null;
 alter table public.canvass_status alter column status set default 'unvisited';
