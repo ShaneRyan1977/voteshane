@@ -1,24 +1,30 @@
-# CVRD Area A Canvass Map Prototype
+# Area A Canvass — Mill Bay / Malahat
 
-Mobile-first interactive parcel map for CVRD Electoral Area A (Mill Bay / Malahat). It uses the supplied CVRD parcel and electoral-area data.
+Mobile canvassing map for CVRD Electoral Area A.
 
-## What it does
-- Shows 2,562 Area A parcels.
-- Tap a parcel to view its parcel ID/PID and status.
-- Claim a parcel for yourself.
-- Mark it visited.
-- Release a claim.
-- Shared mode syncs changes between volunteers through Supabase Realtime.
-- Demo mode stores changes only in the current browser/device.
+## Property panel
+When a property is opened, the panel now shows only:
+- Civic address (when CVRD AddressBC returns one)
+- Phone number
+- Email
+- Four colour-coded canvassing buttons:
+  - Supporter — green
+  - Visited — blue
+  - Reach out — orange
+  - Against — red
 
-## Make it collaborative
-1. Create a free Supabase project.
-2. In Authentication, enable Anonymous Sign-Ins.
-3. Run `supabase_schema.sql` in the SQL editor.
-4. Enable Realtime for `canvass_status`.
-5. Host this folder on HTTPS (GitHub Pages, Netlify, Cloudflare Pages, etc.).
-6. Open the URL on a phone, enter the Supabase URL and anon key once.
+Tapping a property opens the main property panel directly; there is no intermediate map popup. Tapping a status button immediately changes the parcel to that colour. The map colours use a stronger, more opaque overlay for easier canvassing at a glance. A **Clear category** button removes the colour/category while keeping any saved phone/email details. Phone and email save automatically for the selected parcel.
 
-For a campaign, keep the public map limited to parcel coverage. Do not put voter names, phone numbers, addresses tied to individuals, or other sensitive personal information in this prototype.
+The Parcel ID, PID, Plan, canvasser-name field, claim/release controls and numeric parcel heading have been removed from the property panel.
 
-Source: Cowichan Valley Regional District GIS parcel/electoral-area data supplied by the user.
+## Shared use with Supabase
+If you used the earlier prototype, run `supabase_schema.sql` in the Supabase SQL editor before using this build. It migrates the old `claimed` status to `reachout`, adds phone/email fields and enables the four new statuses.
+
+In Supabase Authentication > Providers, enable Anonymous Sign-Ins. Enable Realtime for `canvass_status` in Database > Publications if you want changes to appear live on multiple devices.
+
+## Privacy
+This version can store phone numbers, email addresses and canvassing status. Secure access to the Supabase project and handle the data in accordance with applicable privacy, election and campaign requirements.
+
+
+## Cache note
+This build uses cache-busted app assets and disables the service worker on localhost/127.0.0.1 so local testing cannot accidentally mix an old JavaScript file with the new interface. On a deployed site, the v5 service worker updates immediately and removes older app caches.

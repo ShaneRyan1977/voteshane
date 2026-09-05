@@ -1,1 +1,90 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111827"><title>Area A Canvass Map</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="styles.css"></head><body><div id="app"><header><div><h1>Area A Canvass Map</h1><div class="sub">Mill Bay / Malahat · <span id="count">Loading…</span></div></div><button id="locate">📍</button></header><section class="toolbar"><input id="search" placeholder="Search parcel / PID…" autocomplete="off"><button id="me">My status</button></section><section class="stats"><div><b id="visited">0</b><span>Visited</span></div><div><b id="claimed">0</b><span>Claimed</span></div><div><b id="remaining">0</b><span>Remaining</span></div></section><div id="map"></div><div id="toast"></div><div id="panel" class="hidden"><button id="closePanel" class="close">×</button><h2 id="parcelTitle">Property</h2><div id="parcelInfo"></div><label>Your name<input id="userName" placeholder="e.g. Shane"></label><div class="actions"><button id="claim" class="primary">Claim for me</button><button id="visit" class="success">Mark visited</button><button id="release">Release</button></div><div id="currentStatus" class="status"></div></div><div id="setup" class="modal"><div class="card"><h2>Area A Canvass Map</h2><p>This prototype is ready to use locally. To make it collaborative for your volunteers, add your Supabase project details below.</p><label>Supabase URL<input id="sbUrl" placeholder="https://your-project.supabase.co"></label><label>Supabase anon key<input id="sbKey" placeholder="eyJ…"></label><button id="saveSetup" class="primary full">Connect</button><button id="demoMode" class="secondary full">Use demo mode (this device only)</button><p class="small">The parcel geometry is CVRD GIS data. Do not enter voter names, phone numbers, or other sensitive personal information into this prototype.</p></div></div></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Area A Canvass Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css?v=5">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <h1>Area A Canvass</h1>
+      <div class="sub">Mill Bay / Malahat · <span id="count">Loading…</span></div>
+    </div>
+    <button id="locate" aria-label="Locate me">📍</button>
+  </header>
+
+  <section class="toolbar">
+    <input id="search" placeholder="Search address…" autocomplete="off">
+  </section>
+
+  <section class="stats">
+    <div class="stat-supporter"><b id="supporterCount">0</b><span>Supporter</span></div>
+    <div class="stat-visited"><b id="visitedCount">0</b><span>Visited</span></div>
+    <div class="stat-reachout"><b id="reachoutCount">0</b><span>Reach out</span></div>
+    <div class="stat-against"><b id="againstCount">0</b><span>Against</span></div>
+  </section>
+
+  <div id="map"></div>
+  <div id="toast"></div>
+
+  <div id="panel" class="hidden">
+    <button id="closePanel" class="close" aria-label="Close">×</button>
+    <div id="parcelInfo"></div>
+
+    <label>Phone number
+      <input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone number">
+    </label>
+
+    <label>Email
+      <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address">
+    </label>
+
+    <div class="actions status-actions">
+      <button id="supporter" class="status-button supporter-button">Supporter</button>
+      <button id="visit" class="status-button visited-button">Visited</button>
+      <button id="reachout" class="status-button reachout-button">Reach out</button>
+      <button id="against" class="status-button against-button">Against</button>
+    </div>
+
+    <button id="clearStatus" class="clear-status-button">Clear category</button>
+    <div id="currentStatus" class="status"></div>
+  </div>
+
+  <div id="setup" class="modal">
+    <div class="card">
+      <h2>Area A Canvass Map</h2>
+      <p>This mobile web app is ready to use locally. To make it collaborative for your canvassers, add your Supabase project details below.</p>
+      <label>Supabase URL<input id="sbUrl" placeholder="https://your-project.supabase.co"></label>
+      <label>Supabase anon key<input id="sbKey" placeholder="eyJ…"></label>
+      <button id="saveSetup" class="primary full">Connect</button>
+      <button id="demoMode" class="secondary full">Use demo mode (this device only)</button>
+      <p class="small">Phone, email and canvassing status can be stored with each property. Secure the shared database appropriately and follow applicable privacy and election rules.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js?v=5"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (isLocal) {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister()));
+    if ("caches" in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  } else {
+    navigator.serviceWorker.register("sw.js?v=5").then(reg => reg.update()).catch(() => {});
+  }
+}
+</script>
+</body>
+</html>
