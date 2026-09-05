@@ -1,5 +1,5 @@
-const CACHE='area-a-canvass-v5';
-const ASSETS=['./','./index.html','./styles.css?v=5','./app.js?v=5','./manifest.webmanifest','./data/area_a_boundary.geojson','./data/area_a_parcels.geojson','./data/search_index.json'];
+const CACHE='area-a-canvass-v6';
+const ASSETS=['./','./index.html','./styles.css?v=6','./app.js?v=6','./manifest.webmanifest','./data/area_a_boundary.geojson','./data/area_a_parcels.geojson','./data/search_index.json','./data/voter_names.json'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
