@@ -189,8 +189,20 @@ function namesForAddress(a){
     return true;
   });
 }
+function streetAddress(a){
+  return [a.STREET_NUMBER,a.STREET_NUMBER_SUFFIX,a.STREET_DIR_PREFIX,a.STREET_NAME,a.STREET_TYPE,a.STREET_DIR_SUFFIX]
+    .filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='')
+    .join(' ').replace(/\s+/g,' ').trim();
+}
+function unitAddressLine(a){
+  const unit=String(a.UNIT_NUMBER||'').trim();
+  if(!unit)return '';
+  const type=String(a.UNIT_TYPE||'Unit').trim()||'Unit';
+  const suffix=String(a.UNIT_NUMBER_SUFFIX||'').trim();
+  return `${type} ${unit}${suffix}`.trim();
+}
 function baseAddress(a){
-  const street=[a.STREET_NUMBER,a.STREET_NUMBER_SUFFIX,a.STREET_DIR_PREFIX,a.STREET_NAME,a.STREET_TYPE,a.STREET_DIR_SUFFIX].filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='').join(' ').replace(/\s+/g,' ').trim();
+  const street=streetAddress(a);
   const locality=String(a.LOCALITY||'').trim();
   return street?(locality?`${street}, ${locality}`:street):(a.FULL_ADDRESS||'Address');
 }
@@ -272,10 +284,21 @@ function addressHtml(addrs,parcelId){
     const k=matchedVoterKey(a)||addressKey(a);
     if(!groups.has(k)){
       const spreadsheetNames=namesForAddress(a);
-      groups.set(k,{key:k,address:baseAddress(a),names:voterOverrideForAddress(parcelId,k,spreadsheetNames)});
+      groups.set(k,{
+        key:k,
+        address:baseAddress(a),
+        street:streetAddress(a),
+        line2:unitAddressLine(a),
+        city:String(a.LOCALITY||'').trim(),
+        names:voterOverrideForAddress(parcelId,k,spreadsheetNames)
+      });
     }
   });
-  return [...groups.values()].map(group=>`<section class="address-group" data-mail-address="${escapeHtml(group.address)}"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
+  return [...groups.values()].map(group=>`<section class="address-group"
+    data-mail-address="${escapeHtml(group.address)}"
+    data-mail-street="${escapeHtml(group.street)}"
+    data-mail-line2="${escapeHtml(group.line2)}"
+    data-mail-city="${escapeHtml(group.city)}"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
 }
 function collectVoterPairs(editor){
   return [...editor.querySelectorAll('.voter-pair')].map(pair=>({
@@ -308,42 +331,45 @@ function todayMMDDYYYY(){
   const d=new Date();
   return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
 }
-function mailBallotBundle(pair){
-  const given=pair.querySelector('.voter-given')?.value.trim()||'';
-  const last=pair.querySelector('.voter-last')?.value.trim()||'';
-  const address=pair.closest('.address-group')?.dataset.mailAddress||'';
-  const phone=$('phone')?.value.trim()||'';
-  const email=$('email')?.value.trim()||'';
-  const fullName=[given,last].filter(Boolean).join(' ');
-  return [
-    `First / Given Names: ${given}`,
-    `Last Name: ${last}`,
-    `Residential Address: ${address}`,
-    `Province: BC`,
-    `Country: Canada`,
-    `Date: ${todayMMDDYYYY()}`,
-    phone?`Phone: ${phone}`:'',
-    email?`Email: ${email}`:'',
-    `Signature: ${fullName} (voter must type/confirm)`,
-    '',
-    'Voter must personally confirm Resident Elector status, eligibility declarations, and mail-to-residential-address selection on the official CVRD form.'
-  ].filter(v=>v!== '').join('\n');
+function todayMMDDYYYY(){
+  const d=new Date();
+  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+}
+function mailBallotData(pair){
+  const group=pair.closest('.address-group');
+  return {
+    given:pair.querySelector('.voter-given')?.value.trim()||'',
+    last:pair.querySelector('.voter-last')?.value.trim()||'',
+    street:group?.dataset.mailStreet||group?.dataset.mailAddress||'',
+    line2:group?.dataset.mailLine2||'',
+    city:group?.dataset.mailCity||'',
+    province:'BC',
+    country:'Canada',
+    date:todayMMDDYYYY(),
+    phone:$('phone')?.value.trim()||'',
+    email:$('email')?.value.trim()||'',
+    residentElector:true,
+    mailToResidential:true
+  };
+}
+function encodeMailBallotData(data){
+  const bytes=new TextEncoder().encode(JSON.stringify(data));
+  let binary='';
+  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 async function openMailBallotForPair(pair){
-  const given=pair.querySelector('.voter-given')?.value.trim()||'';
-  const last=pair.querySelector('.voter-last')?.value.trim()||'';
-  if(!given&&!last){toast('Enter the voter name first');return}
-
-  // Open synchronously so mobile browsers do not treat it as a blocked popup.
-  window.open(CVRD_MAIL_BALLOT_URL,'_blank','noopener,noreferrer');
-  const text=mailBallotBundle(pair);
-  try{
-    await navigator.clipboard.writeText(text);
-    toast('CVRD form opened · voter details copied');
-  }catch{
-    // Older/mobile browsers can deny clipboard access. Show the details in a prompt
-    // so they can still be copied manually without losing the official form tab.
-    window.prompt('CVRD form opened. Copy these voter details:',text);
+  const data=mailBallotData(pair);
+  if(!data.given&&!data.last){toast('Enter the voter name first');return}
+  const editor=pair.closest('.voter-editor');
+  if(editor)saveVoterEditor(editor).catch(()=>{});
+  const url=CVRD_MAIL_BALLOT_URL+'#voteshane='+encodeMailBallotData(data);
+  const opened=window.open(url,'_blank');
+  if(opened){
+    try{opened.opener=null}catch{}
+    toast('CVRD form opened · run “Fill CVRD Ballot”');
+  }else{
+    window.location.href=url;
   }
 }
 
