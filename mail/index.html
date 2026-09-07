@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mail Ballot Application | Shane Ryan</title>
+  <meta name="description" content="Access the official CVRD Mail Ballot Application form.">
+  <style>
+    :root {
+      --navy: #18314f;
+      --navy-dark: #10243b;
+      --gold: #d4a74f;
+      --bg: #f4f5f7;
+      --text: #1f2933;
+      --muted: #667085;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--navy);
+      color: white;
+      padding: 12px 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.14);
+    }
+
+    .topbar-inner {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .back-btn,
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .back-btn {
+      padding: 10px 14px;
+      background: white;
+      color: var(--navy);
+      white-space: nowrap;
+    }
+
+    .back-btn:hover,
+    .primary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    main {
+      flex: 1;
+      width: min(900px, calc(100% - 32px));
+      margin: 42px auto;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 48px);
+      box-shadow: 0 10px 30px rgba(16, 36, 59, .10);
+      border: 1px solid #e4e7ec;
+    }
+
+    .eyebrow {
+      color: var(--navy);
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      color: var(--navy-dark);
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.05;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0 0 18px;
+    }
+
+    .official-note {
+      margin: 26px 0;
+      padding: 16px 18px;
+      background: #f8fafc;
+      border-left: 4px solid var(--gold);
+      border-radius: 6px;
+      color: #475467;
+    }
+
+    .primary-btn {
+      min-height: 54px;
+      padding: 14px 22px;
+      background: var(--navy);
+      color: white;
+      font-size: 1.05rem;
+    }
+
+    .primary-btn:hover {
+      background: var(--navy-dark);
+    }
+
+    .small {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .91rem;
+    }
+
+    footer {
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: .85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .topbar-inner {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .brand {
+        text-align: center;
+      }
+
+      .back-btn {
+        width: 100%;
+      }
+
+      main {
+        margin: 24px auto;
+      }
+
+      .primary-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Shane Ryan</div>
+      <a class="back-btn" href="https://www.shaneryan.ca/">← Back to ShaneRyan.ca</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="eyebrow">2026 General Local Election</div>
+      <h1>Apply to Vote by Mail</h1>
+
+      <p>
+        Use the official Cowichan Valley Regional District mail ballot application.
+      </p>
+
+      <div class="official-note">
+        The application is hosted and maintained by the CVRD. Opening the official form
+        ensures you always see the current information and that your application is submitted
+        directly to the CVRD.
+      </div>
+
+      <a
+        class="primary-btn"
+        href="https://cvrd.ca/form-centre/mail-ballot-application-form-general-request/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Open Official CVRD Mail Ballot Application ↗
+      </a>
+
+      <p class="small">
+        The CVRD form will open in a new tab. This ShaneRyan.ca page will remain open so you
+        can return to it at any time.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    This page does not collect or store information entered into the CVRD application.
+  </footer>
+</body>
+</html>
