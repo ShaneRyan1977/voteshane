@@ -230,7 +230,7 @@ function editedVoterSearchEntries(){
   });
   return out;
 }
-function voterNameMatches(query,limit=12){
+function voterNameMatches(query,limit=30){
   const q=normalizePersonSearch(query);
   if(q.length<2)return [];
   const terms=q.split(' ').filter(Boolean);
@@ -238,10 +238,7 @@ function voterNameMatches(query,limit=12){
   const overriddenKeys=new Set();
   state.forEach(raw=>{
     Object.entries(normalizeRow(raw).voter_names||{}).forEach(([k,people])=>{
-      // Older versions could save an empty override for an address simply by
-      // opening/saving a property. An empty override must NOT hide the original
-      // spreadsheet voters from search. Only a non-empty saved voter list is
-      // treated as an authoritative replacement.
+      // An empty saved list from older builds must not hide the spreadsheet names.
       if(Array.isArray(people)&&people.length>0)overriddenKeys.add(k);
     });
   });
@@ -249,23 +246,34 @@ function voterNameMatches(query,limit=12){
   const seen=new Set();
   const scored=[];
   combined.forEach(item=>{
+    const given=normalizePersonSearch(item.given);
+    const last=normalizePersonSearch(item.last);
     const hay1=item.givenLast, hay2=item.lastGiven;
     const addressSearch=normalizePersonSearch(item.address);
-    const allSearch=`${hay1} ${hay2} ${addressSearch}`;
-    // Match voter names, and also allow useful combined searches such as
-    // "Christine Ryan 841" or "Ryan Trans Canada".
+    const nameSearch=`${hay1} ${hay2}`;
+    const allSearch=`${nameSearch} ${addressSearch}`;
     if(!terms.every(t=>allSearch.includes(t)))return;
-    const signature=`${item.addressKey}|${normalizePersonSearch(item.given)}|${normalizePersonSearch(item.last)}`;
+    const signature=`${item.addressKey}|${given}|${last}`;
     if(seen.has(signature))return;
     seen.add(signature);
+
+    // Rank actual name matches ahead of loose/middle-name/address matches.
+    // This makes searches like "Christine" show people whose Given Names are
+    // exactly CHRISTINE before people who merely have Christine as a middle name.
     let score=0;
-    if(hay1===q||hay2===q)score+=120;
-    else if(hay1.startsWith(q)||hay2.startsWith(q))score+=80;
-    else if(hay1.includes(q)||hay2.includes(q))score+=55;
-    if(addressSearch===q)score+=35;
-    else if(addressSearch.includes(q))score+=15;
-    if(item.edited)score+=8;
-    score-=Math.min(20,(hay1.length-q.length)/10);
+    if(hay1===q||hay2===q)score=1000;                 // exact full name
+    else if(given===q||last===q)score=900;            // exact Given Names / Last Name
+    else if(given.startsWith(q)||last.startsWith(q))score=760;
+    else if(hay1.startsWith(q)||hay2.startsWith(q))score=700;
+    else if(terms.every(t=>nameSearch.includes(t)))score=560;
+    else score=350;                                   // name + address combination
+
+    if(addressSearch===q)score+=45;
+    else if(addressSearch.includes(q))score+=20;
+
+    // Do not boost entries merely because they were previously saved to
+    // Supabase; that was causing common first-name searches to hide valid voters.
+    score-=Math.min(12,Math.max(0,(hay1.length-q.length)/12));
     scored.push({...item,score});
   });
   return scored.sort((a,b)=>b.score-a.score||a.last.localeCompare(b.last)||a.given.localeCompare(b.given)).slice(0,limit);

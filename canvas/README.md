@@ -31,3 +31,10 @@ Version 15 — voter search fix
 - Name search now also accepts address terms, e.g. "Christine Ryan 841".
 - Exact full-name matches receive higher ranking.
 - Search result de-duplication now prefers the edited version of the same voter/address instead of displaying duplicates.
+
+
+Version 16 — search ranking + watermark
+- Exact Given Names and Last Name matches rank ahead of middle-name/loose matches.
+- Removed the ranking boost for voter records merely because they had been saved to Supabase.
+- Increased voter search results from 12 to 30.
+- Added a two-digit version watermark (16) at bottom-left.
