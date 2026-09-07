@@ -1,4 +1,8 @@
 const DATA_URL='data/area_a_parcels.geojson', BOUNDARY_URL='data/area_a_boundary.geojson', VOTER_URL='data/voter_names.json';
+const SUPABASE_URL='https://oogsafixkjfbfqwdhchg.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_yNbwniMtOQ2aMKvd3H8vcw_4vop4Q1r';
+const ACCESS_PASSWORD_SHA256='14f5943a2a47d0966b84098b53f6c4ce3d1d997d49de20376e69c0b9ecfa2d3a';
+const ACCESS_SESSION_KEY='areaA_access_granted_v9';
 let map, parcelsLayer, boundaryLayer, features=[], selected=null, supa=null, channel=null, demo=false;
 let voterData={by_key:{},fallback_unique:{}};
 const state=new Map();
@@ -368,25 +372,6 @@ async function init(){
   updateStats();
 }
 
-$('saveSetup').onclick=async()=>{
-  const u=$('sbUrl').value.trim(),k=$('sbKey').value.trim();
-  if(!u||!k){toast('Enter both Supabase values');return}
-  try{
-    await connect(u,k);
-    localStorage.setItem('sb_url',u);
-    localStorage.setItem('sb_key',k);
-    $('setup').classList.add('hidden');
-    refresh();
-    toast('Collaborative mode connected');
-  }catch(e){toast('Connection failed: '+e.message)}
-};
-$('demoMode').onclick=()=>{
-  demo=true;
-  loadDemo();
-  $('setup').classList.add('hidden');
-  refresh();
-  toast('Demo mode: changes stay on this device');
-};
 $('closePanel').onclick=()=>{
   if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
   $('panel').classList.add('hidden');
@@ -472,15 +457,72 @@ $('search').addEventListener('input',e=>{
   },350);
 });
 
-(async()=>{
-  await init();
-  const u=localStorage.getItem('sb_url'),k=localStorage.getItem('sb_key');
-  if(u&&k){
+function hexFromBuffer(buffer){
+  return [...new Uint8Array(buffer)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function passwordMatches(value){
+  const bytes=new TextEncoder().encode(value);
+  const digest=await crypto.subtle.digest('SHA-256',bytes);
+  return hexFromBuffer(digest)===ACCESS_PASSWORD_SHA256;
+}
+
+let startupPromise=null;
+async function startApp(){
+  if(startupPromise)return startupPromise;
+  startupPromise=(async()=>{
+    const gate=$('accessGate');
+    const button=$('unlockApp');
+    const error=$('accessError');
+    if(button){button.disabled=true;button.textContent='Opening…'}
+    if(error)error.textContent='';
     try{
-      await connect(u,k);
-      $('setup').classList.add('hidden');
+      await init();
+      await connect(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+      gate?.classList.add('hidden');
       refresh();
       toast('Connected to shared map');
-    }catch{}
+      setTimeout(()=>map?.invalidateSize(),80);
+    }catch(e){
+      startupPromise=null;
+      if(button){button.disabled=false;button.textContent='Open map'}
+      if(error)error.textContent='Unable to connect to the shared canvassing data. Check your internet connection and try again.';
+      console.error(e);
+      throw e;
+    }
+  })();
+  return startupPromise;
+}
+
+$('accessForm').addEventListener('submit',async event=>{
+  event.preventDefault();
+  const input=$('accessPassword');
+  const error=$('accessError');
+  const button=$('unlockApp');
+  error.textContent='';
+  button.disabled=true;
+  button.textContent='Checking…';
+  try{
+    if(!await passwordMatches(input.value)){
+      error.textContent='Incorrect password.';
+      input.value='';
+      input.focus();
+      return;
+    }
+    sessionStorage.setItem(ACCESS_SESSION_KEY,'1');
+    await startApp();
+  }catch{}
+  finally{
+    if(!$('accessGate').classList.contains('hidden')){
+      button.disabled=false;
+      button.textContent='Open map';
+    }
+  }
+});
+
+(async()=>{
+  if(sessionStorage.getItem(ACCESS_SESSION_KEY)==='1'){
+    try{await startApp()}catch{}
+  }else{
+    setTimeout(()=>$('accessPassword')?.focus(),50);
   }
 })();

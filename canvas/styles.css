@@ -15,3 +15,11 @@ header{height:58px;background:#111827;color:#fff;display:flex;align-items:center
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.actions button{min-height:46px;border:0;border-radius:10px;padding:10px 9px;font-weight:800;box-shadow:0 2px 7px #0002}.status-button{color:#fff}.supporter-button{background:#16a34a}.visited-button{background:#2563eb}.reachout-button{background:#f97316}.against-button{background:#dc2626}.status-button.active{outline:3px solid #111827;outline-offset:2px}.clear-status-button{width:100%;min-height:42px;margin-top:10px;border:1px solid #9ca3af;border-radius:10px;background:#f3f4f6;color:#374151;font-weight:750}.status{margin-top:10px;font-size:12px;color:#4b5563;font-weight:650}
 @media(max-width:520px){.voter-pair{grid-template-columns:1fr 1fr}.remove-voter{grid-column:1/-1;width:100%}}
 @media(min-width:800px){.toolbar{right:auto;width:460px}.stats{right:auto;width:620px}#panel{width:410px;max-width:calc(100vw - 36px);max-height:78dvh}.panel-topbar{min-height:48px;padding:3px 6px 3px 16px;border-radius:14px 14px 0 0}.panel-scroll{padding:0 16px 16px}.voter-pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}}
+
+/* v9 access gate */
+.access-gate{z-index:5000;background:rgba(17,24,39,.92)}
+.access-card{max-width:380px}
+.access-card p{margin:0 0 14px;color:#4b5563;line-height:1.4}
+.access-card input{min-height:48px}
+.access-card button:disabled{opacity:.65;cursor:wait}
+.access-error{min-height:20px;margin-top:10px;color:#b91c1c;font-size:13px;font-weight:650}
