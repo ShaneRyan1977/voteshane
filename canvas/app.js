@@ -1,4 +1,5 @@
 const DATA_URL='data/area_a_parcels.geojson', BOUNDARY_URL='data/area_a_boundary.geojson', VOTER_URL='data/voter_names.json';
+const CVRD_MAIL_BALLOT_URL='https://cvrd.ca/form-centre/mail-ballot-application-form-general-request/';
 const SUPABASE_URL='https://oogsafixkjfbfqwdhchg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_yNbwniMtOQ2aMKvd3H8vcw_4vop4Q1r';
 const ACCESS_PASSWORD_SHA256='14f5943a2a47d0966b84098b53f6c4ce3d1d997d49de20376e69c0b9ecfa2d3a';
@@ -250,7 +251,10 @@ function voterPairHtml(person={given:'',last:''}){
   return `<div class="voter-pair">
     <label>Given Names<input class="voter-given" type="text" autocomplete="off" value="${escapeHtml(person.given||'')}"></label>
     <label>Last Name<input class="voter-last" type="text" autocomplete="off" value="${escapeHtml(person.last||'')}"></label>
-    <button type="button" class="remove-voter" aria-label="Remove voter name">Remove</button>
+    <div class="voter-actions">
+      <button type="button" class="mail-in-voter" aria-label="Open mail ballot application for this voter">Mail In</button>
+      <button type="button" class="remove-voter" aria-label="Remove voter name">Remove</button>
+    </div>
   </div>`;
 }
 function voterEditorHtml(key,names){
@@ -271,7 +275,7 @@ function addressHtml(addrs,parcelId){
       groups.set(k,{key:k,address:baseAddress(a),names:voterOverrideForAddress(parcelId,k,spreadsheetNames)});
     }
   });
-  return [...groups.values()].map(group=>`<section class="address-group"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
+  return [...groups.values()].map(group=>`<section class="address-group" data-mail-address="${escapeHtml(group.address)}"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
 }
 function collectVoterPairs(editor){
   return [...editor.querySelectorAll('.voter-pair')].map(pair=>({
@@ -298,6 +302,49 @@ async function saveVoterEditor(editor){
   const ok=await saveRow(parcelId,row);
   if(ok)toast('Voter names saved');
   return ok;
+}
+
+function todayMMDDYYYY(){
+  const d=new Date();
+  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+}
+function mailBallotBundle(pair){
+  const given=pair.querySelector('.voter-given')?.value.trim()||'';
+  const last=pair.querySelector('.voter-last')?.value.trim()||'';
+  const address=pair.closest('.address-group')?.dataset.mailAddress||'';
+  const phone=$('phone')?.value.trim()||'';
+  const email=$('email')?.value.trim()||'';
+  const fullName=[given,last].filter(Boolean).join(' ');
+  return [
+    `First / Given Names: ${given}`,
+    `Last Name: ${last}`,
+    `Residential Address: ${address}`,
+    `Province: BC`,
+    `Country: Canada`,
+    `Date: ${todayMMDDYYYY()}`,
+    phone?`Phone: ${phone}`:'',
+    email?`Email: ${email}`:'',
+    `Signature: ${fullName} (voter must type/confirm)`,
+    '',
+    'Voter must personally confirm Resident Elector status, eligibility declarations, and mail-to-residential-address selection on the official CVRD form.'
+  ].filter(v=>v!== '').join('\n');
+}
+async function openMailBallotForPair(pair){
+  const given=pair.querySelector('.voter-given')?.value.trim()||'';
+  const last=pair.querySelector('.voter-last')?.value.trim()||'';
+  if(!given&&!last){toast('Enter the voter name first');return}
+
+  // Open synchronously so mobile browsers do not treat it as a blocked popup.
+  window.open(CVRD_MAIL_BALLOT_URL,'_blank','noopener,noreferrer');
+  const text=mailBallotBundle(pair);
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('CVRD form opened · voter details copied');
+  }catch{
+    // Older/mobile browsers can deny clipboard access. Show the details in a prompt
+    // so they can still be copied manually without losing the official form tab.
+    window.prompt('CVRD form opened. Copy these voter details:',text);
+  }
 }
 
 function statusText(s){
@@ -416,6 +463,12 @@ $('panel').addEventListener('focusin',event=>{
 $('parcelInfo').addEventListener('click',async event=>{
   const editor=event.target.closest('.voter-editor');
   if(!editor)return;
+  const mailIn=event.target.closest('.mail-in-voter');
+  if(mailIn){
+    const pair=mailIn.closest('.voter-pair');
+    if(pair)await openMailBallotForPair(pair);
+    return;
+  }
   if(event.target.closest('.add-voter')){
     const pairs=editor.querySelector('.voter-pairs');
     pairs.querySelector('.no-voters')?.remove();

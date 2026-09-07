@@ -21,3 +21,6 @@ This is a static GitHub Pages app. The publishable Supabase key is intended to b
 
 
 Version 10: Clicking Supporter, Visited, Reach out, or Against now saves the property and immediately closes the property dialog. Visible voter-name edits are included in the same save before closing.
+
+
+Version 11: Added a Mail In button above Remove for each voter. It opens the official CVRD mail-ballot application and copies the selected voter name, property address, current date, and saved phone/email to the clipboard. Eligibility declarations and signature remain for the voter to personally confirm on the official form.
