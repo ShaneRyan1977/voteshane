@@ -24,3 +24,10 @@ Version 10: Clicking Supporter, Visited, Reach out, or Against now saves the pro
 
 
 Version 14: Reverted to the pre-Mail-In application. The main search box now searches voter Given Names and Last Names as well as addresses. Repeated name matches are shown in a selectable results list with the voter address. Edited voter names stored in Supabase are also included in search.
+
+
+Version 15 — voter search fix
+- Fixes a Version 14 bug where an empty Supabase voter-name override could hide valid spreadsheet voters from search.
+- Name search now also accepts address terms, e.g. "Christine Ryan 841".
+- Exact full-name matches receive higher ranking.
+- Search result de-duplication now prefers the edited version of the same voter/address instead of displaying duplicates.

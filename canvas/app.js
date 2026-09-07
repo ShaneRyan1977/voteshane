@@ -236,22 +236,34 @@ function voterNameMatches(query,limit=12){
   const terms=q.split(' ').filter(Boolean);
   const edited=editedVoterSearchEntries();
   const overriddenKeys=new Set();
-  state.forEach(raw=>Object.keys(normalizeRow(raw).voter_names||{}).forEach(k=>overriddenKeys.add(k)));
-  // Once canvassers edit the names for an address, treat that saved list as
-  // authoritative. This keeps removed spreadsheet names from reappearing in search.
+  state.forEach(raw=>{
+    Object.entries(normalizeRow(raw).voter_names||{}).forEach(([k,people])=>{
+      // Older versions could save an empty override for an address simply by
+      // opening/saving a property. An empty override must NOT hide the original
+      // spreadsheet voters from search. Only a non-empty saved voter list is
+      // treated as an authoritative replacement.
+      if(Array.isArray(people)&&people.length>0)overriddenKeys.add(k);
+    });
+  });
   const combined=[...edited,...voterSearchIndex.filter(item=>!overriddenKeys.has(item.addressKey))];
   const seen=new Set();
   const scored=[];
   combined.forEach(item=>{
     const hay1=item.givenLast, hay2=item.lastGiven;
-    if(!terms.every(t=>hay1.includes(t)||hay2.includes(t)))return;
-    const signature=`${item.parcelId||''}|${item.addressKey}|${item.given}|${item.last}`;
+    const addressSearch=normalizePersonSearch(item.address);
+    const allSearch=`${hay1} ${hay2} ${addressSearch}`;
+    // Match voter names, and also allow useful combined searches such as
+    // "Christine Ryan 841" or "Ryan Trans Canada".
+    if(!terms.every(t=>allSearch.includes(t)))return;
+    const signature=`${item.addressKey}|${normalizePersonSearch(item.given)}|${normalizePersonSearch(item.last)}`;
     if(seen.has(signature))return;
     seen.add(signature);
     let score=0;
-    if(hay1===q||hay2===q)score+=100;
-    else if(hay1.startsWith(q)||hay2.startsWith(q))score+=60;
-    else if(hay1.includes(q)||hay2.includes(q))score+=40;
+    if(hay1===q||hay2===q)score+=120;
+    else if(hay1.startsWith(q)||hay2.startsWith(q))score+=80;
+    else if(hay1.includes(q)||hay2.includes(q))score+=55;
+    if(addressSearch===q)score+=35;
+    else if(addressSearch.includes(q))score+=15;
     if(item.edited)score+=8;
     score-=Math.min(20,(hay1.length-q.length)/10);
     scored.push({...item,score});
