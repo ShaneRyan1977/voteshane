@@ -2,8 +2,11 @@
 
 Mobile canvassing map for CVRD Area A.
 
-## Version 7 changes
-- The mobile property form is now a full visual-viewport sheet rather than a floating card. It tracks the browser's visible viewport and has its own internal scrolling area, so it cannot drift off-screen when the mobile keyboard opens, browser bars move, or the phone rotates.
+## Version 8 changes
+- Fixed the Android Chrome dialog drift bug. The property dialog is now a centered fixed card with a 12px minimum margin from every screen edge.
+- Removed manual `visualViewport.offsetLeft` / `offsetTop` positioning, which could push the dialog partially off-screen on Android Chrome.
+- Added `interactive-widget=resizes-content` so the visible page resizes when the Android keyboard opens.
+- The dialog keeps its own internal scrolling and the close button remains accessible.
 - The close button remains fixed at the top of the visible property sheet.
 - Voter names are now editable as paired **Given Names** and **Last Name** fields.
 - Each address has **+ Add name** and **Remove** controls.

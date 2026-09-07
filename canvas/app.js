@@ -293,22 +293,9 @@ function syncPanelToViewport(){
   viewportSyncFrame=requestAnimationFrame(()=>{
     const panel=$('panel');
     if(!panel||panel.classList.contains('hidden'))return;
-    if(window.matchMedia('(min-width:800px)').matches){
-      ['top','left','right','bottom','width','height','maxHeight'].forEach(prop=>panel.style[prop]='');
-      return;
-    }
-    const vv=window.visualViewport;
-    const top=Math.max(0,vv?.offsetTop||0);
-    const left=Math.max(0,vv?.offsetLeft||0);
-    const width=Math.max(280,vv?.width||window.innerWidth);
-    const height=Math.max(260,vv?.height||window.innerHeight);
-    panel.style.top=`${top}px`;
-    panel.style.left=`${left}px`;
-    panel.style.right='auto';
-    panel.style.bottom='auto';
-    panel.style.width=`${width}px`;
-    panel.style.height=`${height}px`;
-    panel.style.maxHeight=`${height}px`;
+    // Never apply visualViewport offsets to a fixed dialog. On Android Chrome
+    // those offsets can be applied twice and push the dialog off-screen.
+    ['top','left','right','bottom','width','height','maxHeight'].forEach(prop=>panel.style[prop]='');
   });
 }
 function keepFieldVisible(target){
@@ -459,7 +446,6 @@ function syncViewportAndFocus(){
 }
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize',syncViewportAndFocus);
-  window.visualViewport.addEventListener('scroll',syncViewportAndFocus);
 }
 window.addEventListener('resize',syncViewportAndFocus);
 window.addEventListener('orientationchange',()=>setTimeout(syncViewportAndFocus,150));
