@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <title>Area A Canvass Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 <div id="app">
@@ -76,7 +76,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 <script>
 if ("serviceWorker" in navigator) {
   const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -84,7 +84,7 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister()));
     if ("caches" in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   } else {
-    navigator.serviceWorker.register("sw.js?v=9").then(reg => reg.update()).catch(() => {});
+    navigator.serviceWorker.register("sw.js?v=10").then(reg => reg.update()).catch(() => {});
   }
 }
 </script>

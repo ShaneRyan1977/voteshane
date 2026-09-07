@@ -18,3 +18,6 @@ This is a static GitHub Pages app. The publishable Supabase key is intended to b
 - Reach out — orange
 - Against — red
 - Clear category returns the property to unmarked while retaining phone/email and voter-name edits.
+
+
+Version 10: Clicking Supporter, Visited, Reach out, or Against now saves the property and immediately closes the property dialog. Visible voter-name edits are included in the same save before closing.

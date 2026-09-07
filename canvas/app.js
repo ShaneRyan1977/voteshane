@@ -98,12 +98,33 @@ async function saveRow(id,row){
   return true;
 }
 
+function collectVisibleVoterOverrides(base={}){
+  const voter_names={...(base||{})};
+  document.querySelectorAll('#parcelInfo .voter-editor').forEach(editor=>{
+    const key=editor.dataset.voterKey;
+    if(key)voter_names[key]=collectVoterPairs(editor);
+  });
+  return voter_names;
+}
+
+function closePropertyPanel(){
+  if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+  $('panel').classList.add('hidden');
+  selected=null;
+}
+
 async function setStatus(id,status){
   if(!STATUS_META[status])return;
   const old=statusFor(id);
-  const row={...old,status,phone:$('phone').value.trim(),email:$('email').value.trim()};
+  const row={
+    ...old,
+    status,
+    phone:$('phone').value.trim(),
+    email:$('email').value.trim(),
+    voter_names:collectVisibleVoterOverrides(old.voter_names)
+  };
   if(await saveRow(id,row)){
-    openSelected(false);
+    closePropertyPanel();
     toast(STATUS_META[status].label+' saved');
   }
 }
@@ -372,11 +393,7 @@ async function init(){
   updateStats();
 }
 
-$('closePanel').onclick=()=>{
-  if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
-  $('panel').classList.add('hidden');
-  selected=null;
-};
+$('closePanel').onclick=closePropertyPanel;
 $('supporter').onclick=()=>selected&&setStatus(selected.properties.ParcelID,'supporter');
 $('visit').onclick=()=>selected&&setStatus(selected.properties.ParcelID,'visited');
 $('reachout').onclick=()=>selected&&setStatus(selected.properties.ParcelID,'reachout');
