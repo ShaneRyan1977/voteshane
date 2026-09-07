@@ -1,11 +1,12 @@
 const DATA_URL='data/area_a_parcels.geojson', BOUNDARY_URL='data/area_a_boundary.geojson', VOTER_URL='data/voter_names.json';
-const CVRD_MAIL_BALLOT_URL='https://cvrd.ca/form-centre/mail-ballot-application-form-general-request/';
 const SUPABASE_URL='https://oogsafixkjfbfqwdhchg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_yNbwniMtOQ2aMKvd3H8vcw_4vop4Q1r';
 const ACCESS_PASSWORD_SHA256='14f5943a2a47d0966b84098b53f6c4ce3d1d997d49de20376e69c0b9ecfa2d3a';
 const ACCESS_SESSION_KEY='areaA_access_granted_v9';
 let map, parcelsLayer, boundaryLayer, features=[], selected=null, supa=null, channel=null, demo=false;
 let voterData={by_key:{},fallback_unique:{}};
+let voterSearchIndex=[];
+const voterParcelCache=new Map();
 const state=new Map();
 const $=id=>document.getElementById(id);
 
@@ -189,20 +190,127 @@ function namesForAddress(a){
     return true;
   });
 }
-function streetAddress(a){
-  return [a.STREET_NUMBER,a.STREET_NUMBER_SUFFIX,a.STREET_DIR_PREFIX,a.STREET_NAME,a.STREET_TYPE,a.STREET_DIR_SUFFIX]
-    .filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='')
-    .join(' ').replace(/\s+/g,' ').trim();
+function normalizePersonSearch(value){
+  return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]+/g,' ').replace(/\s+/g,' ').trim();
 }
-function unitAddressLine(a){
-  const unit=String(a.UNIT_NUMBER||'').trim();
-  if(!unit)return '';
-  const type=String(a.UNIT_TYPE||'Unit').trim()||'Unit';
-  const suffix=String(a.UNIT_NUMBER_SUFFIX||'').trim();
-  return `${type} ${unit}${suffix}`.trim();
+function voterAddressLabel(key){
+  const [number='',street='',type='']=String(key||'').split('|');
+  return [number,street,type].filter(Boolean).join(' ');
+}
+function buildVoterSearchIndex(){
+  const out=[];
+  Object.entries(voterData.by_key||{}).forEach(([addressKeyValue,people])=>{
+    (people||[]).forEach(person=>{
+      const given=String(person?.given||'').trim();
+      const last=String(person?.last||'').trim();
+      if(!given&&!last)return;
+      const givenLast=normalizePersonSearch(`${given} ${last}`);
+      const lastGiven=normalizePersonSearch(`${last} ${given}`);
+      out.push({given,last,addressKey:addressKeyValue,address:voterAddressLabel(addressKeyValue),givenLast,lastGiven,edited:false,parcelId:null});
+    });
+  });
+  voterSearchIndex=out;
+}
+function editedVoterSearchEntries(){
+  const out=[];
+  state.forEach((raw,parcelId)=>{
+    const row=normalizeRow(raw);
+    Object.entries(row.voter_names||{}).forEach(([addressKeyValue,people])=>{
+      (people||[]).forEach(person=>{
+        const given=String(person?.given||'').trim();
+        const last=String(person?.last||'').trim();
+        if(!given&&!last)return;
+        out.push({
+          given,last,addressKey:addressKeyValue,address:voterAddressLabel(addressKeyValue),
+          givenLast:normalizePersonSearch(`${given} ${last}`),
+          lastGiven:normalizePersonSearch(`${last} ${given}`),edited:true,parcelId
+        });
+      });
+    });
+  });
+  return out;
+}
+function voterNameMatches(query,limit=12){
+  const q=normalizePersonSearch(query);
+  if(q.length<2)return [];
+  const terms=q.split(' ').filter(Boolean);
+  const edited=editedVoterSearchEntries();
+  const overriddenKeys=new Set();
+  state.forEach(raw=>Object.keys(normalizeRow(raw).voter_names||{}).forEach(k=>overriddenKeys.add(k)));
+  // Once canvassers edit the names for an address, treat that saved list as
+  // authoritative. This keeps removed spreadsheet names from reappearing in search.
+  const combined=[...edited,...voterSearchIndex.filter(item=>!overriddenKeys.has(item.addressKey))];
+  const seen=new Set();
+  const scored=[];
+  combined.forEach(item=>{
+    const hay1=item.givenLast, hay2=item.lastGiven;
+    if(!terms.every(t=>hay1.includes(t)||hay2.includes(t)))return;
+    const signature=`${item.parcelId||''}|${item.addressKey}|${item.given}|${item.last}`;
+    if(seen.has(signature))return;
+    seen.add(signature);
+    let score=0;
+    if(hay1===q||hay2===q)score+=100;
+    else if(hay1.startsWith(q)||hay2.startsWith(q))score+=60;
+    else if(hay1.includes(q)||hay2.includes(q))score+=40;
+    if(item.edited)score+=8;
+    score-=Math.min(20,(hay1.length-q.length)/10);
+    scored.push({...item,score});
+  });
+  return scored.sort((a,b)=>b.score-a.score||a.last.localeCompare(b.last)||a.given.localeCompare(b.given)).slice(0,limit);
+}
+function hideSearchResults(){
+  const box=$('searchResults');
+  if(box){box.innerHTML='';box.classList.add('hidden')}
+}
+function showVoterSearchResults(results){
+  const box=$('searchResults');
+  if(!box)return;
+  if(!results.length){hideSearchResults();return}
+  box.innerHTML=results.map((r,i)=>`<button type="button" class="search-result" data-search-index="${i}">
+    <span class="search-result-name">${escapeHtml([r.given,r.last].filter(Boolean).join(' '))}</span>
+    <span class="search-result-address">${escapeHtml(r.address||'Address unavailable')}</span>
+  </button>`).join('');
+  box._voterResults=results;
+  box.classList.remove('hidden');
+}
+async function resolveVoterAddressToParcel(result){
+  if(result.parcelId){selectParcel(result.parcelId);return true}
+  if(voterParcelCache.has(result.addressKey)){
+    const parcelId=voterParcelCache.get(result.addressKey);
+    if(parcelId){selectParcel(parcelId);return true}
+  }
+  const [number='',street='',type='']=String(result.addressKey||'').split('|');
+  if(!number||!street)return false;
+  try{
+    const safeNumber=number.replace(/'/g,"''");
+    const safeStreet=street.replace(/'/g,"''");
+    const safeType=type.replace(/'/g,"''");
+    const typeClause=safeType?` AND UPPER(STREET_TYPE)='${safeType}'`:'';
+    const where=`UPPER(CAST(STREET_NUMBER AS VARCHAR(20)))='${safeNumber}' AND UPPER(STREET_NAME)='${safeStreet}'${typeClause}`;
+    const p=new URLSearchParams({where,outFields:'CIVIC_ID,FULL_ADDRESS,STREET_NUMBER,STREET_NAME,STREET_TYPE',f:'json',returnGeometry:'true',outSR:'4326',resultRecordCount:'10'});
+    let r=await fetch(ADDRESS_QUERY+'?'+p.toString());
+    let j=await r.json();
+    if(!j.features?.length){
+      const phrase=[number,street,type].filter(Boolean).join(' ').toLowerCase().replace(/'/g,"''");
+      const p2=new URLSearchParams({where:`LOWER(FULL_ADDRESS) LIKE '${phrase}%'`,outFields:'CIVIC_ID,FULL_ADDRESS,STREET_NUMBER,STREET_NAME,STREET_TYPE',f:'json',returnGeometry:'true',outSR:'4326',resultRecordCount:'10'});
+      r=await fetch(ADDRESS_QUERY+'?'+p2.toString());
+      j=await r.json();
+    }
+    for(const hit of j.features||[]){
+      const pt=hit.geometry;
+      if(!pt||pt.x===undefined||pt.y===undefined)continue;
+      const near=features.find(f=>pointInFeature([pt.x,pt.y],f.geometry)||L.geoJSON(f).getBounds().contains([pt.y,pt.x]));
+      if(near){
+        voterParcelCache.set(result.addressKey,near.properties.ParcelID);
+        selectParcel(near.properties.ParcelID);
+        return true;
+      }
+    }
+  }catch(e){console.error('Voter address lookup failed',e)}
+  return false;
 }
 function baseAddress(a){
-  const street=streetAddress(a);
+  const street=[a.STREET_NUMBER,a.STREET_NUMBER_SUFFIX,a.STREET_DIR_PREFIX,a.STREET_NAME,a.STREET_TYPE,a.STREET_DIR_SUFFIX].filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='').join(' ').replace(/\s+/g,' ').trim();
   const locality=String(a.LOCALITY||'').trim();
   return street?(locality?`${street}, ${locality}`:street):(a.FULL_ADDRESS||'Address');
 }
@@ -263,10 +371,7 @@ function voterPairHtml(person={given:'',last:''}){
   return `<div class="voter-pair">
     <label>Given Names<input class="voter-given" type="text" autocomplete="off" value="${escapeHtml(person.given||'')}"></label>
     <label>Last Name<input class="voter-last" type="text" autocomplete="off" value="${escapeHtml(person.last||'')}"></label>
-    <div class="voter-actions">
-      <button type="button" class="mail-in-voter" aria-label="Open mail ballot application for this voter">Mail In</button>
-      <button type="button" class="remove-voter" aria-label="Remove voter name">Remove</button>
-    </div>
+    <button type="button" class="remove-voter" aria-label="Remove voter name">Remove</button>
   </div>`;
 }
 function voterEditorHtml(key,names){
@@ -284,21 +389,10 @@ function addressHtml(addrs,parcelId){
     const k=matchedVoterKey(a)||addressKey(a);
     if(!groups.has(k)){
       const spreadsheetNames=namesForAddress(a);
-      groups.set(k,{
-        key:k,
-        address:baseAddress(a),
-        street:streetAddress(a),
-        line2:unitAddressLine(a),
-        city:String(a.LOCALITY||'').trim(),
-        names:voterOverrideForAddress(parcelId,k,spreadsheetNames)
-      });
+      groups.set(k,{key:k,address:baseAddress(a),names:voterOverrideForAddress(parcelId,k,spreadsheetNames)});
     }
   });
-  return [...groups.values()].map(group=>`<section class="address-group"
-    data-mail-address="${escapeHtml(group.address)}"
-    data-mail-street="${escapeHtml(group.street)}"
-    data-mail-line2="${escapeHtml(group.line2)}"
-    data-mail-city="${escapeHtml(group.city)}"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
+  return [...groups.values()].map(group=>`<section class="address-group"><div class="address"><b>Address:</b> ${escapeHtml(group.address)}</div>${voterEditorHtml(group.key,group.names)}</section>`).join('');
 }
 function collectVoterPairs(editor){
   return [...editor.querySelectorAll('.voter-pair')].map(pair=>({
@@ -325,52 +419,6 @@ async function saveVoterEditor(editor){
   const ok=await saveRow(parcelId,row);
   if(ok)toast('Voter names saved');
   return ok;
-}
-
-function todayMMDDYYYY(){
-  const d=new Date();
-  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
-}
-function todayMMDDYYYY(){
-  const d=new Date();
-  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
-}
-function mailBallotData(pair){
-  const group=pair.closest('.address-group');
-  return {
-    given:pair.querySelector('.voter-given')?.value.trim()||'',
-    last:pair.querySelector('.voter-last')?.value.trim()||'',
-    street:group?.dataset.mailStreet||group?.dataset.mailAddress||'',
-    line2:group?.dataset.mailLine2||'',
-    city:group?.dataset.mailCity||'',
-    province:'BC',
-    country:'Canada',
-    date:todayMMDDYYYY(),
-    phone:$('phone')?.value.trim()||'',
-    email:$('email')?.value.trim()||'',
-    residentElector:true,
-    mailToResidential:true
-  };
-}
-function encodeMailBallotData(data){
-  const bytes=new TextEncoder().encode(JSON.stringify(data));
-  let binary='';
-  bytes.forEach(b=>binary+=String.fromCharCode(b));
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-async function openMailBallotForPair(pair){
-  const data=mailBallotData(pair);
-  if(!data.given&&!data.last){toast('Enter the voter name first');return}
-  const editor=pair.closest('.voter-editor');
-  if(editor)saveVoterEditor(editor).catch(()=>{});
-  const url=CVRD_MAIL_BALLOT_URL+'#voteshane='+encodeMailBallotData(data);
-  const opened=window.open(url,'_blank');
-  if(opened){
-    try{opened.opener=null}catch{}
-    toast('CVRD form opened · run “Fill CVRD Ballot”');
-  }else{
-    window.location.href=url;
-  }
 }
 
 function statusText(s){
@@ -455,6 +503,7 @@ async function init(){
     fetch(VOTER_URL).then(r=>r.ok?r.json():null).catch(()=>null)
   ]);
   if(voters)voterData=voters;
+  buildVoterSearchIndex();
   features=geo.features;
   map=L.map('map',{zoomControl:true}).setView([48.55,-123.55],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:20,attribution:'© OpenStreetMap contributors'}).addTo(map);
@@ -489,12 +538,6 @@ $('panel').addEventListener('focusin',event=>{
 $('parcelInfo').addEventListener('click',async event=>{
   const editor=event.target.closest('.voter-editor');
   if(!editor)return;
-  const mailIn=event.target.closest('.mail-in-voter');
-  if(mailIn){
-    const pair=mailIn.closest('.voter-pair');
-    if(pair)await openMailBallotForPair(pair);
-    return;
-  }
   if(event.target.closest('.add-voter')){
     const pairs=editor.querySelector('.voter-pairs');
     pairs.querySelector('.no-voters')?.remove();
@@ -534,13 +577,23 @@ window.addEventListener('orientationchange',()=>setTimeout(syncViewportAndFocus,
 let searchTimer;
 $('search').addEventListener('input',e=>{
   clearTimeout(searchTimer);
-  const q=e.target.value.toLowerCase().trim();
+  const q=e.target.value.trim();
+  if(q.length<2){hideSearchResults();return}
+
+  const voterMatches=voterNameMatches(q);
+  if(voterMatches.length){
+    showVoterSearchResults(voterMatches);
+    return;
+  }
+  hideSearchResults();
+
   if(q.length<3)return;
-  const f=features.find(x=>(x.properties.search||'').includes(q));
+  const lower=q.toLowerCase();
+  const f=features.find(x=>(x.properties.search||'').includes(lower));
   if(f){selectParcel(f.properties.ParcelID);return}
   searchTimer=setTimeout(async()=>{
     try{
-      const p=new URLSearchParams({where:`LOWER(FULL_ADDRESS) LIKE '%${q.replace(/'/g,"''")}%'`,outFields:'CIVIC_ID,FULL_ADDRESS',f:'json',returnGeometry:'true',outSR:'4326',resultRecordCount:'10'});
+      const p=new URLSearchParams({where:`LOWER(FULL_ADDRESS) LIKE '%${lower.replace(/'/g,"''")}%'`,outFields:'CIVIC_ID,FULL_ADDRESS',f:'json',returnGeometry:'true',outSR:'4326',resultRecordCount:'10'});
       const r=await fetch(ADDRESS_QUERY+'?'+p.toString());
       const j=await r.json();
       if(j.features&&j.features.length){
@@ -551,6 +604,22 @@ $('search').addEventListener('input',e=>{
       }
     }catch{}
   },350);
+});
+
+$('searchResults').addEventListener('click',async event=>{
+  const button=event.target.closest('.search-result');
+  if(!button)return;
+  const results=$('searchResults')._voterResults||[];
+  const result=results[Number(button.dataset.searchIndex)];
+  if(!result)return;
+  hideSearchResults();
+  $('search').value=[result.given,result.last].filter(Boolean).join(' ');
+  toast('Finding '+$('search').value+'…');
+  if(!await resolveVoterAddressToParcel(result))toast('Could not locate that voter’s property on the map');
+});
+
+document.addEventListener('pointerdown',event=>{
+  if(!event.target.closest('.toolbar'))hideSearchResults();
 });
 
 function hexFromBuffer(buffer){
