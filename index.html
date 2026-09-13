@@ -7,19 +7,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --forest: #1a3a2a;
-    --pine: #2d5a3d;
-    --sage: #4a7c5e;
-    --mint: #7bbf94;
-    --ocean: #1b4f72;
-    --sky: #2e86ab;
-    --sky-light: #5ba4c7;
-    --cream: #f7f4ee;
-    --warm-white: #fdfcf9;
-    --gold: #c9a227;
-    --text-dark: #1a1a1a;
-    --text-mid: #3a3a3a;
-    --facebook-blue: #1877F2
+    /* 2026 campaign palette, matched to the printed brochure */
+    --brand-navy: #005895;
+    --brand-blue: #1b8ac8;
+    --brand-teal: #169da6;
+    --brand-green: #4dba89;
+    --brand-red: #df2029;
+    --brand-white: #ffffff;
+    --brand-soft: #f4f7f8;
+
+    /* Legacy semantic names retained so the existing layout stays intact */
+    --forest: var(--brand-navy);
+    --pine: #0876aa;
+    --sage: var(--brand-teal);
+    --mint: var(--brand-green);
+    --ocean: var(--brand-blue);
+    --sky: var(--brand-teal);
+    --sky-light: var(--brand-green);
+    --cream: var(--brand-soft);
+    --warm-white: var(--brand-white);
+    --gold: var(--brand-red);
+    --text-dark: #202327;
+    --text-mid: #444b52;
+    --facebook-blue: #1877F2;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,12 +46,12 @@
   /* ── NAV ── */
   nav {
     position: fixed; top: 0; width: 100%; z-index: 100;
-    background: rgba(26,58,42,0.97);
+    background: rgba(0,88,149,0.97);
     backdrop-filter: blur(8px);
     padding: 0 2rem;
     display: flex; align-items: center; justify-content: space-between;
     height: 64px;
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid var(--brand-green);
   }
   .nav-logo {
     font-family: 'Playfair Display', serif;
@@ -49,10 +59,10 @@
     color: var(--cream);
     letter-spacing: 0.04em;
   }
-  .nav-logo span { color: var(--gold); }
+  .nav-logo span { color: var(--brand-white); }
   .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a {
-    color: rgba(247,244,238,0.82);
+    color: rgba(255,255,255,0.82);
     text-decoration: none;
     font-size: 0.88rem;
     font-weight: 600;
@@ -60,7 +70,7 @@
     text-transform: uppercase;
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover { color: var(--brand-green); }
 
   /* ── HERO ── */
   .hero {
@@ -72,7 +82,7 @@
   }
 
   .hero-left {
-    background: var(--forest);
+    background: linear-gradient(120deg, var(--brand-blue) 0%, var(--brand-teal) 58%, var(--brand-green) 100%);
     display: flex; flex-direction: column; justify-content: center;
     padding: 8rem 5rem 4rem 5rem;
     position: relative;
@@ -82,7 +92,7 @@
   .hero-left::before {
     content: '';
     position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234a7c5e' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.10'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     pointer-events: none;
   }
 
@@ -91,7 +101,7 @@
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: rgba(255,255,255,0.9);
     margin-bottom: 1.2rem;
     opacity: 0;
     animation: fadeUp 0.7s 0.2s forwards;
@@ -111,7 +121,7 @@
   .hero-title {
     font-size: 1.05rem;
     font-weight: 300;
-    color: var(--mint);
+    color: rgba(255,255,255,0.92);
     letter-spacing: 0.04em;
     margin-bottom: 2.2rem;
     opacity: 0;
@@ -120,7 +130,7 @@
 
   .hero-tagline {
     font-size: 2rem;
-    color: rgba(247,244,238,0.85);
+    color: rgba(255,255,255,0.85);
     line-height: 1.65;
     max-width: 400px;
     margin-bottom: 2.8rem;
@@ -133,8 +143,8 @@
 
   .hero-cta {
     display: inline-flex; align-items: center; gap: 0.7rem;
-    background: var(--gold);
-    color: var(--forest);
+    background: var(--brand-red);
+    color: var(--brand-white);
     padding: 0.9rem 2.2rem;
     font-weight: 700;
     font-size: 0.92rem;
@@ -167,7 +177,7 @@
     width: fit-content;
   }
 
-  .hero-cta:hover { background: #e0b52a; transform: translateY(-2px); }
+  .hero-cta:hover { background: #c71922; transform: translateY(-2px); }
 
   .hero-right {
     position: relative;
@@ -178,7 +188,7 @@
   .hero-right::before {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(27,79,114,0.4) 0%, rgba(26,58,42,0.6) 100%);
+    background: linear-gradient(135deg, rgba(27,138,200,0.25) 0%, rgba(0,88,149,0.58) 100%);
     z-index: 1;
   }
 
@@ -197,14 +207,14 @@
   .hero-photo-overlay {
     position: absolute; bottom: 0; left: 0; right: 0;
     z-index: 2;
-    background: linear-gradient(to top, rgba(26,58,42,0.95) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0,88,149,0.96) 0%, transparent 62%);
     padding: 2.5rem 2.5rem 2rem;
   }
 
   .hero-area-badge {
     display: inline-block;
-    background: var(--gold);
-    color: var(--forest);
+    background: var(--brand-navy);
+    color: var(--brand-white);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -222,7 +232,7 @@
 
   /* ── STATS BAR ── */
   .stats-bar {
-    background: var(--ocean);
+    background: linear-gradient(100deg, var(--brand-blue) 0%, var(--brand-teal) 55%, var(--brand-green) 100%);
     padding: 2rem 4rem;
     display: flex; justify-content: space-around; align-items: center;
     flex-wrap: wrap; gap: 1.5rem;
@@ -232,7 +242,7 @@
     font-family: 'Playfair Display', serif;
     font-size: 2.4rem;
     font-weight: 900;
-    color: var(--gold);
+    color: var(--brand-white);
     display: block;
   }
   .stat-label {
@@ -240,9 +250,9 @@
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(247,244,238,0.7);
+    color: rgba(255,255,255,0.7);
   }
-  .stat-divider { width: 1px; height: 50px; background: rgba(247,244,238,0.2); }
+  .stat-divider { width: 1px; height: 50px; background: rgba(255,255,255,0.2); }
 
   /* ── SECTION SHARED ── */
   section { padding: 6rem 0; }
@@ -260,7 +270,7 @@
     line-height: 1.1;
     margin-bottom: 1.5rem;
   }
-  .section-title .accent { color: var(--sky); }
+  .section-title .accent { color: var(--brand-teal); }
 
   /* ── PRIORITIES ── */
   .priorities { background: var(--cream); }
@@ -280,7 +290,7 @@
 
   .priority-card {
     background: var(--warm-white);
-    border-left: 4px solid var(--sage);
+    border-left: 4px solid var(--brand-green);
     padding: 2rem;
     transition: border-color 0.25s, transform 0.2s, box-shadow 0.2s;
     position: relative;
@@ -289,20 +299,20 @@
   .priority-card::after {
     content: '';
     position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--gold), transparent);
+    background: linear-gradient(90deg, var(--brand-red), transparent);
     transform: scaleX(0); transform-origin: left;
     transition: transform 0.3s;
   }
   .priority-card:hover {
-    border-color: var(--ocean);
+    border-color: var(--brand-blue);
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(27,79,114,0.12);
+    box-shadow: 0 12px 32px rgba(0,88,149,0.14);
   }
   .priority-card:hover::after { transform: scaleX(1); }
 
   .priority-icon {
     width: 44px; height: 44px;
-    background: var(--forest);
+    background: var(--brand-navy);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 1.2rem;
@@ -321,9 +331,9 @@
   }
 
   /* ── TAX CHART SECTION ── */
-  .tax-section { background: var(--forest); color: var(--cream); }
+  .tax-section { background: linear-gradient(135deg, var(--brand-navy) 0%, #0878aa 100%); color: var(--brand-white); }
   .tax-section .section-title { color: var(--cream); }
-  .tax-section .section-label { color: var(--mint); }
+  .tax-section .section-label { color: var(--brand-green); }
 
   .tax-layout {
     display: grid;
@@ -333,14 +343,14 @@
   }
   .tax-copy p {
     font-size: 1.02rem;
-    color: rgba(247,244,238,0.82);
+    color: rgba(255,255,255,0.82);
     line-height: 1.75;
     margin-bottom: 1.2rem;
   }
   .tax-stat {
     display: inline-block;
-    background: var(--gold);
-    color: var(--forest);
+    background: var(--brand-red);
+    color: var(--brand-white);
     font-family: 'Playfair Display', serif;
     font-size: 2.6rem; font-weight: 900;
     padding: 0.4rem 1.2rem;
@@ -349,7 +359,7 @@
   .tax-stat-label {
     font-size: 0.85rem; font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--mint);
+    color: var(--brand-green);
     display: block; margin-bottom: 1.5rem;
   }
 
@@ -371,7 +381,7 @@
   .chart-caption {
     margin-top: 1rem;
     font-size: 0.78rem;
-    color: rgba(247,244,238,0.5);
+    color: rgba(255,255,255,0.5);
     text-align: center;
     letter-spacing: 0.05em;
   }
@@ -388,13 +398,13 @@
   .about-photo {
     width: 100%;
     display: block;
-    border: 3px solid var(--forest);
+    border: 3px solid var(--brand-navy);
   }
   .about-photo-label {
     position: absolute;
     bottom: -1px; left: 0; right: 0;
-    background: var(--forest);
-    color: var(--cream);
+    background: var(--brand-navy);
+    color: var(--brand-white);
     text-align: center;
     font-size: 0.78rem;
     font-weight: 600;
@@ -418,20 +428,20 @@
     display: flex; align-items: flex-start; gap: 0.9rem;
     padding: 0.9rem 1.1rem;
     background: var(--cream);
-    border-left: 3px solid var(--gold);
+    border-left: 3px solid var(--brand-red);
   }
   .highlight-check {
-    color: var(--sage); font-size: 1rem; flex-shrink: 0; margin-top: 1px;
+    color: var(--brand-green); font-size: 1rem; flex-shrink: 0; margin-top: 1px;
   }
   .highlight-text { font-size: 0.93rem; color: var(--text-mid); line-height: 1.5; }
   .highlight-text strong { color: var(--forest); }
 
   /* ── RECORD ── */
-  .record { background: linear-gradient(160deg, #1b4f72 0%, #1a3a2a 100%); }
+  .record { background: linear-gradient(135deg, var(--brand-navy) 0%, #0f79aa 55%, var(--brand-teal) 100%); }
   .record .section-title { color: var(--cream); }
-  .record .section-label { color: var(--mint); }
+  .record .section-label { color: var(--brand-green); }
   .record-intro {
-    color: rgba(247,244,238,0.8);
+    color: rgba(255,255,255,0.8);
     font-size: 1.05rem;
     line-height: 1.75;
     max-width: 640px;
@@ -452,7 +462,7 @@
   .record-year {
     font-size: 0.72rem; font-weight: 700;
     letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 0.6rem;
+    color: var(--brand-green); margin-bottom: 0.6rem;
   }
   .record-desc {
     color: var(--cream);
@@ -477,7 +487,7 @@
     margin-top: 1.5rem;
   }
   .pill {
-    background: var(--forest); color: var(--cream);
+    background: var(--brand-navy); color: var(--brand-white);
     font-size: 0.78rem; font-weight: 600;
     letter-spacing: 0.08em; text-transform: uppercase;
     padding: 0.4rem 1rem;
@@ -485,21 +495,21 @@
   }
   .family-photo {
     width: 100%; display: block;
-    border: 3px solid var(--forest);
-    box-shadow: 12px 12px 0 var(--sage);
+    border: 3px solid var(--brand-navy);
+    box-shadow: 12px 12px 0 var(--brand-green);
   }
 
   /* ── SIGN UP ── */
-  .signup { background: var(--forest); }
+  .signup { background: linear-gradient(100deg, var(--brand-blue) 0%, var(--brand-teal) 58%, var(--brand-green) 100%); }
   .signup-inner {
     max-width: 680px; margin: 0 auto;
     text-align: center;
   }
 
-  .signup .section-label { color: var(--mint); }
+  .signup .section-label { color: var(--brand-white); }
   .signup .section-title { color: var(--cream); }
   .signup-text {
-    color: rgba(247,244,238,0.78);
+    color: rgba(255,255,255,0.78);
     font-size: 1.05rem;
     line-height: 1.7;
     margin-bottom: 2.5rem;
@@ -519,11 +529,11 @@
     outline: none;
     transition: border-color 0.2s;
   }
-  .signup-input::placeholder { color: rgba(247,244,238,0.4); }
-  .signup-input:focus { border-color: var(--gold); }
+  .signup-input::placeholder { color: rgba(255,255,255,0.4); }
+  .signup-input:focus { border-color: var(--brand-white); }
   .signup-btn {
-    background: var(--gold);
-    color: var(--forest);
+    background: var(--brand-red);
+    color: var(--brand-white);
     border: none;
     padding: 0.9rem 1.8rem;
     font-family: 'Source Sans 3', sans-serif;
@@ -535,17 +545,17 @@
     transition: background 0.2s;
     white-space: nowrap;
   }
-  .signup-btn:hover { background: #e0b52a; }
+  .signup-btn:hover { background: #c71922; }
   .signup-note {
     margin-top: 1rem;
     font-size: 0.8rem;
-    color: rgba(247,244,238,0.45);
+    color: rgba(255,255,255,0.45);
   }
   .signup-success {
     display: none;
-    background: rgba(74,124,94,0.3);
-    border: 1px solid var(--mint);
-    color: var(--mint);
+    background: rgba(0,88,149,0.24);
+    border: 1px solid rgba(255,255,255,0.7);
+    color: var(--brand-white);
     padding: 1rem 2rem;
     font-size: 1rem;
     margin-top: 1rem;
@@ -565,11 +575,11 @@
     display: flex; align-items: center; gap: 1rem;
     font-size: 1rem; color: var(--text-mid);
   }
-  .contact-row a { color: var(--ocean); text-decoration: none; }
+  .contact-row a { color: var(--brand-navy); text-decoration: none; }
   .contact-row a:hover { text-decoration: underline; }
   .contact-icon {
     width: 38px; height: 38px;
-    background: var(--forest);
+    background: var(--brand-navy);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     color: var(--cream);
@@ -579,14 +589,14 @@
 
   /* ── FOOTER ── */
   footer {
-    background: #0f2218;
-    color: rgba(247,244,238,0.5);
+    background: var(--brand-navy);
+    color: rgba(255,255,255,0.5);
     text-align: center;
     padding: 2rem;
     font-size: 0.82rem;
     letter-spacing: 0.05em;
   }
-  footer a { color: var(--mint); text-decoration: none; }
+  footer a { color: var(--brand-green); text-decoration: none; }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
@@ -703,8 +713,8 @@
 
   .cta-button.donate {
     display: inline-block;
-    background-color: #c9a227;
-    color: #163524;
+    background-color: var(--brand-red);
+    color: var(--brand-white);
     padding: 16px 34px;
     font-size: 14px;
     font-weight: 600;
@@ -716,7 +726,7 @@
   }
 
   .cta-button.donate:hover {
-    background-color: #b8921f;
+    background-color: #c71922;
     transform: translateY(-1px);
   }
 
@@ -743,7 +753,7 @@
 <section class="hero">
   <div class="hero-left">
     <p class="hero-eyebrow">Cowichan Valley Regional District · Mill Bay/Malahat</p>
-    <h1 class="hero-name">Shane<br><span style="color:#c9a227;">Ryan</span></h1>
+    <h1 class="hero-name">Shane<br><span style="color:var(--brand-white);">Ryan</span></h1>
     <p class="hero-title">Candidate for Director — Mill Bay / Malahat Area A</p>
     <p class="hero-tagline"><strong>Less is More</strong>.<br> Less taxes. More transparency.</p>
     <a href="#signup" class="hero-cta">
@@ -985,7 +995,7 @@
           </div>
         </div>
       </div>
-      <div style="background: var(--cream); padding: 2.5rem; border-left: 4px solid var(--gold);">
+      <div style="background: var(--cream); padding: 2.5rem; border-left: 4px solid var(--brand-red);">
         <p style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--forest); margin-bottom: 1rem;">"The primary job of the Area Director is to be a fierce advocate for the community. I will be that voice for all of us in Mill Bay/Malahat. "</p>
         <p style="font-size: 0.88rem; color: var(--text-mid); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">— Shane Ryan</p>
       </div>
