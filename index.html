@@ -453,21 +453,37 @@
     gap: 1.2rem;
   }
   .record-item {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 1.8rem;
-    transition: background 0.2s;
+    background: rgba(0, 40, 72, 0.48);
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 1.9rem;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    transition: background 0.2s, transform 0.2s;
   }
-  .record-item:hover { background: rgba(255,255,255,0.12); }
+  .record-item:hover {
+    background: rgba(0, 40, 72, 0.62);
+    transform: translateY(-2px);
+  }
   .record-year {
-    font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--brand-green); margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 0.75rem;
   }
   .record-desc {
-    color: var(--cream);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+  .record-desc strong {
+    display: inline-block;
+    color: #ffffff !important;
+    background: var(--brand-red);
+    padding: 0.06em 0.34em;
+    margin-right: 0.12em;
+    border-radius: 3px;
+    font-weight: 700;
   }
 
   /* ── FAMILY ── */
