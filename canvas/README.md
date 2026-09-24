@@ -38,3 +38,6 @@ Version 16 — search ranking + watermark
 - Removed the ranking boost for voter records merely because they had been saved to Supabase.
 - Increased voter search results from 12 to 30.
 - Added a two-digit version watermark (16) at bottom-left.
+
+
+Version 17: Registered-voter properties now receive a small black map dot with a white halo. The dot is a separate non-interactive overlay, so Supporter/Visited/Reach out/Against parcel colours remain unchanged. The app resolves voter addresses from CVRD AddressBC within Area A and caches the cue locations on the device for faster subsequent loads. Version watermark updated to 17.

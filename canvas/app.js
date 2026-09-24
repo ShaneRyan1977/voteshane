@@ -3,7 +3,7 @@ const SUPABASE_URL='https://oogsafixkjfbfqwdhchg.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_yNbwniMtOQ2aMKvd3H8vcw_4vop4Q1r';
 const ACCESS_PASSWORD_SHA256='14f5943a2a47d0966b84098b53f6c4ce3d1d997d49de20376e69c0b9ecfa2d3a';
 const ACCESS_SESSION_KEY='areaA_access_granted_v9';
-let map, parcelsLayer, boundaryLayer, features=[], selected=null, supa=null, channel=null, demo=false;
+let map, parcelsLayer, boundaryLayer, voterCueLayer, features=[], selected=null, supa=null, channel=null, demo=false;
 let voterData={by_key:{},fallback_unique:{}};
 let voterSearchIndex=[];
 const voterParcelCache=new Map();
@@ -357,6 +357,106 @@ function pointInFeature(point,geometry){
   return false;
 }
 
+const VOTER_CUE_CACHE_KEY='areaA_registered_voter_cues_v17';
+function addressHasRegisteredVoter(a){
+  const k=matchedVoterKey(a);
+  return Array.isArray(voterData.by_key?.[k])&&voterData.by_key[k].length>0;
+}
+function pointInsideBoundary(point,boundary){
+  return (boundary?.features||[]).some(f=>pointInFeature(point,f.geometry));
+}
+function renderRegisteredVoterCues(points){
+  if(!map)return;
+  if(voterCueLayer){voterCueLayer.clearLayers()}else{voterCueLayer=L.layerGroup().addTo(map)}
+  (points||[]).forEach(p=>{
+    if(!Number.isFinite(p.lat)||!Number.isFinite(p.lng))return;
+    L.circleMarker([p.lat,p.lng],{
+      radius:4,
+      color:'#ffffff',
+      weight:2,
+      opacity:1,
+      fillColor:'#111827',
+      fillOpacity:.96,
+      interactive:false,
+      className:'registered-voter-cue'
+    }).addTo(voterCueLayer);
+  });
+  const legend=$('voterCueLegend');
+  if(legend)legend.classList.toggle('hidden',!(points||[]).length);
+}
+function loadCachedRegisteredVoterCues(){
+  try{
+    const cached=JSON.parse(localStorage.getItem(VOTER_CUE_CACHE_KEY)||'null');
+    if(Array.isArray(cached?.points)&&cached.points.length){
+      renderRegisteredVoterCues(cached.points);
+      return true;
+    }
+  }catch{}
+  return false;
+}
+async function loadRegisteredVoterCues(boundary){
+  loadCachedRegisteredVoterCues();
+  try{
+    const b=boundaryLayer.getBounds();
+    const envelope=[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].join(',');
+    const baseParams={
+      where:'1=1',
+      geometry:envelope,
+      geometryType:'esriGeometryEnvelope',
+      inSR:'4326',
+      outSR:'4326',
+      spatialRel:'esriSpatialRelIntersects'
+    };
+
+    // Ask ArcGIS for object IDs first. The IDs-only response is not subject to
+    // the normal feature transfer limit, so this remains complete even when
+    // Area A contains more addresses than one query page can return.
+    const idParams=new URLSearchParams({...baseParams,returnIdsOnly:'true',returnGeometry:'false',f:'json'});
+    const idResponse=await fetch(ADDRESS_QUERY+'?'+idParams.toString(),{cache:'no-store'});
+    if(!idResponse.ok)throw new Error('Address lookup failed');
+    const idJson=await idResponse.json();
+    if(idJson.error)throw new Error(idJson.error.message||'Address lookup failed');
+    const ids=Array.isArray(idJson.objectIds)?idJson.objectIds:[];
+    if(!ids.length)return;
+
+    const found=[];
+    const seenAddressKeys=new Set();
+    const chunkSize=500;
+    for(let i=0;i<ids.length;i+=chunkSize){
+      const objectIds=ids.slice(i,i+chunkSize).join(',');
+      const p=new URLSearchParams({
+        objectIds,
+        outFields:'CIVIC_ID,STREET_NUMBER,STREET_NAME,STREET_TYPE',
+        f:'json',
+        returnGeometry:'true',
+        outSR:'4326'
+      });
+      const r=await fetch(ADDRESS_QUERY+'?'+p.toString(),{cache:'no-store'});
+      if(!r.ok)throw new Error('Address lookup failed');
+      const j=await r.json();
+      if(j.error)throw new Error(j.error.message||'Address lookup failed');
+      (j.features||[]).forEach(hit=>{
+        const a=hit.attributes||hit.properties||{};
+        if(!addressHasRegisteredVoter(a))return;
+        const pt=hit.geometry;
+        const lng=Number(pt?.x), lat=Number(pt?.y);
+        if(!Number.isFinite(lat)||!Number.isFinite(lng))return;
+        if(!pointInsideBoundary([lng,lat],boundary))return;
+        const k=matchedVoterKey(a);
+        if(seenAddressKeys.has(k))return;
+        seenAddressKeys.add(k);
+        found.push({lat,lng,key:k});
+      });
+    }
+    if(found.length){
+      renderRegisteredVoterCues(found);
+      try{localStorage.setItem(VOTER_CUE_CACHE_KEY,JSON.stringify({savedAt:Date.now(),points:found}))}catch{}
+    }
+  }catch(e){
+    console.warn('Registered voter cues could not be refreshed',e);
+  }
+}
+
 const ADDRESS_QUERY='https://maps.cvrd.ca/mapservices/rest/services/AddressBC/MapServer/0/query';
 async function findAddressesForParcel(f){
   try{
@@ -533,6 +633,7 @@ async function init(){
   }}).addTo(map);
   map.fitBounds(parcelsLayer.getBounds());
   updateStats();
+  loadRegisteredVoterCues(boundary);
 }
 
 $('closePanel').onclick=closePropertyPanel;
