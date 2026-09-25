@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <title>Area A Canvass Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 <div id="app">
@@ -34,8 +34,8 @@
   </section>
 
   <div id="map"></div>
-  <div id="voterCueLegend" class="voter-cue-legend hidden"><span class="voter-cue-swatch" aria-hidden="true"></span>Registered voter</div>
-  <div id="versionWatermark" class="version-watermark" aria-label="Version 17">17</div>
+  <div id="voterCueLegend" class="voter-cue-legend hidden"><span class="voter-cue-swatch" aria-hidden="true"></span><span id="voterCueLabel">Finding voter properties…</span></div>
+  <div id="versionWatermark" class="version-watermark" aria-label="Version 20">20</div>
   <div id="toast"></div>
 
   <div id="panel" class="hidden" role="dialog" aria-modal="true" aria-label="Property details">
@@ -78,7 +78,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=20"></script>
 <script>
 if ("serviceWorker" in navigator) {
   const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
@@ -86,7 +86,7 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(reg => reg.unregister()));
     if ("caches" in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   } else {
-    navigator.serviceWorker.register("sw.js?v=17").then(reg => reg.update()).catch(() => {});
+    navigator.serviceWorker.register("sw.js?v=20").then(reg => reg.update()).catch(() => {});
   }
 }
 </script>

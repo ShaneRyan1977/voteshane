@@ -41,3 +41,26 @@ Version 16 — search ranking + watermark
 
 
 Version 17: Registered-voter properties now receive a small black map dot with a white halo. The dot is a separate non-interactive overlay, so Supporter/Visited/Reach out/Against parcel colours remain unchanged. The app resolves voter addresses from CVRD AddressBC within Area A and caches the cue locations on the device for faster subsequent loads. Version watermark updated to 17.
+
+
+Version 18 — registered-voter cue redo
+- Replaces the tiny registered-voter dots with a thick black dashed parcel outline over a white halo.
+- Keeps Supporter/Visited/Reach out/Against fill colours unchanged.
+- Replaces the v17 one-shot bulk AddressBC request with smaller street batches and fallbacks so the voter-to-parcel mapping is much more reliable on mobile browsers.
+- Shows mapping progress/count in the bottom-left legend and caches resolved parcel IDs for faster later loads.
+
+
+Version 19 — registered voter cue fix
+- Restores the missing addressHasRegisteredVoter helper that caused Version 18's background cue scan to fail.
+- Uses the same voter-name association as the property dialog.
+- Any opened property with one or more effective voter names is immediately marked.
+- Saved manually edited/added voter names also mark their parcel.
+- Cue is a heavy black dashed outline with white halo; at zoom 15+ a black V badge appears inside the parcel.
+- Existing Supporter/Visited/Reach out/Against fill colours are unchanged.
+
+
+Version 20 — toned-down registered-voter cue
+- Removes the heavy dashed voter outlines and large V badges.
+- Registered-voter properties now use a small semi-transparent dark dot with a thin white edge.
+- Dots appear only at zoom 16 and closer so neighbourhood-wide views remain readable.
+- Existing Supporter / Visited / Reach out / Against parcel colours are unchanged.

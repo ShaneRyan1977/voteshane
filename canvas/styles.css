@@ -26,7 +26,10 @@ header{height:58px;background:#111827;color:#fff;display:flex;align-items:center
 
 .version-watermark{position:fixed;left:7px;bottom:6px;z-index:1000;font-size:11px;font-weight:800;line-height:1;color:#111827;background:rgba(255,255,255,.62);border:1px solid rgba(17,24,39,.18);border-radius:5px;padding:3px 5px;pointer-events:none;user-select:none;backdrop-filter:blur(2px)}
 
-/* v17 registered-voter cue: separate from parcel status colours */
-.voter-cue-legend{position:fixed;left:7px;bottom:30px;z-index:1000;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:750;line-height:1;color:#111827;background:rgba(255,255,255,.86);border:1px solid rgba(17,24,39,.20);border-radius:6px;padding:5px 7px;pointer-events:none;user-select:none;box-shadow:0 1px 5px #0002;backdrop-filter:blur(2px)}
-.voter-cue-swatch{width:9px;height:9px;border-radius:50%;background:#111827;border:2px solid #fff;box-shadow:0 0 0 1px #111827;flex:0 0 auto}
-.registered-voter-cue{pointer-events:none}
+
+
+/* v20 registered-voter cue: subtle dot at door-knocking zoom only */
+.voter-cue-legend{position:fixed;left:7px;bottom:30px;z-index:1000;display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;line-height:1.15;color:#374151;background:rgba(255,255,255,.78);border:1px solid rgba(17,24,39,.15);border-radius:6px;padding:5px 7px;pointer-events:none;user-select:none;box-shadow:0 1px 4px #0002;backdrop-filter:blur(2px)}
+.voter-cue-swatch{width:8px;height:8px;border-radius:50%;background:rgba(17,24,39,.72);border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(17,24,39,.18);flex:0 0 auto}
+.voter-parcel-dot-wrap{background:transparent!important;border:0!important}
+.voter-parcel-dot{display:block;width:100%;height:100%;border-radius:50%;background:rgba(17,24,39,.68);border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(17,24,39,.18);pointer-events:none}

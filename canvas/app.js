@@ -4,6 +4,7 @@ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_yNbwniMtOQ2aMKvd3H8vcw_4vop4Q1r';
 const ACCESS_PASSWORD_SHA256='14f5943a2a47d0966b84098b53f6c4ce3d1d997d49de20376e69c0b9ecfa2d3a';
 const ACCESS_SESSION_KEY='areaA_access_granted_v9';
 let map, parcelsLayer, boundaryLayer, voterCueLayer, features=[], selected=null, supa=null, channel=null, demo=false;
+let featureById=new Map();
 let voterData={by_key:{},fallback_unique:{}};
 let voterSearchIndex=[];
 const voterParcelCache=new Map();
@@ -357,103 +358,223 @@ function pointInFeature(point,geometry){
   return false;
 }
 
-const VOTER_CUE_CACHE_KEY='areaA_registered_voter_cues_v17';
-function addressHasRegisteredVoter(a){
+const VOTER_CUE_CACHE_KEY='areaA_registered_voter_parcels_v20';
+const registeredVoterParcelIds=new Set();
+
+// Use exactly the same voter-name association logic as the property dialog.
+// When parcelId is supplied, saved name edits/removals take precedence over the
+// original spreadsheet names. Without a parcel id (background scan), the
+// bundled voter register is used.
+function addressHasRegisteredVoter(a,parcelId=null){
   const k=matchedVoterKey(a);
+  if(parcelId){
+    const row=statusFor(parcelId);
+    if(Object.prototype.hasOwnProperty.call(row.voter_names||{},k)){
+      return Array.isArray(row.voter_names[k])&&row.voter_names[k].length>0;
+    }
+  }
   return Array.isArray(voterData.by_key?.[k])&&voterData.by_key[k].length>0;
 }
-function pointInsideBoundary(point,boundary){
-  return (boundary?.features||[]).some(f=>pointInFeature(point,f.geometry));
+
+function setParcelRegisteredVoterCue(parcelId,hasVoter){
+  if(!parcelId)return;
+  if(hasVoter)registeredVoterParcelIds.add(parcelId);
+  else registeredVoterParcelIds.delete(parcelId);
+  renderRegisteredVoterParcels([...registeredVoterParcelIds]);
+  try{localStorage.setItem(VOTER_CUE_CACHE_KEY,JSON.stringify({savedAt:Date.now(),parcelIds:[...registeredVoterParcelIds]}))}catch{}
 }
-function renderRegisteredVoterCues(points){
-  if(!map)return;
-  if(voterCueLayer){voterCueLayer.clearLayers()}else{voterCueLayer=L.layerGroup().addTo(map)}
-  (points||[]).forEach(p=>{
-    if(!Number.isFinite(p.lat)||!Number.isFinite(p.lng))return;
-    L.circleMarker([p.lat,p.lng],{
-      radius:4,
-      color:'#ffffff',
-      weight:2,
-      opacity:1,
-      fillColor:'#111827',
-      fillOpacity:.96,
-      interactive:false,
-      className:'registered-voter-cue'
-    }).addTo(voterCueLayer);
+
+function updateParcelVoterCueFromAddresses(parcelId,addrs){
+  const hasVoter=(addrs||[]).some(a=>addressHasRegisteredVoter(a,parcelId));
+  setParcelRegisteredVoterCue(parcelId,hasVoter);
+  return hasVoter;
+}
+
+function addSavedVoterCueParcels(){
+  state.forEach((raw,parcelId)=>{
+    const row=normalizeRow(raw);
+    const hasSavedNames=Object.values(row.voter_names||{}).some(list=>Array.isArray(list)&&list.length>0);
+    if(hasSavedNames)registeredVoterParcelIds.add(parcelId);
   });
-  const legend=$('voterCueLegend');
-  if(legend)legend.classList.toggle('hidden',!(points||[]).length);
+  if(registeredVoterParcelIds.size)renderRegisteredVoterParcels([...registeredVoterParcelIds]);
 }
-function loadCachedRegisteredVoterCues(){
+
+function parcelBounds(feature){
+  if(feature.__bbox)return feature.__bbox;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  const walk=c=>{
+    if(Array.isArray(c)&&typeof c[0]==='number'&&typeof c[1]==='number'){
+      minX=Math.min(minX,c[0]);maxX=Math.max(maxX,c[0]);
+      minY=Math.min(minY,c[1]);maxY=Math.max(maxY,c[1]);
+    }else if(Array.isArray(c))c.forEach(walk);
+  };
+  walk(feature.geometry?.coordinates);
+  feature.__bbox=[minX,minY,maxX,maxY];
+  return feature.__bbox;
+}
+function parcelIdsForAddressPoint(lng,lat){
+  const ids=[];
+  for(const f of features){
+    const [minX,minY,maxX,maxY]=parcelBounds(f);
+    if(lng<minX||lng>maxX||lat<minY||lat>maxY)continue;
+    if(pointInFeature([lng,lat],f.geometry))ids.push(f.properties.ParcelID);
+  }
+  return ids;
+}
+function renderRegisteredVoterParcels(ids){
+  if(!map)return;
+  registeredVoterParcelIds.clear();
+  (ids||[]).forEach(id=>registeredVoterParcelIds.add(id));
+  if(voterCueLayer){voterCueLayer.clearLayers()}else{voterCueLayer=L.layerGroup().addTo(map)}
+  const cueFeatures=[...registeredVoterParcelIds].map(id=>featureById.get(id)).filter(Boolean);
+  const zoom=map.getZoom();
+
+  // Keep the map clean at neighbourhood-wide zooms. At door-knocking zoom,
+  // use only a small centre dot so status fills and parcel lines remain primary.
+  if(cueFeatures.length && zoom>=16){
+    const size=zoom>=18?10:8;
+    cueFeatures.forEach(f=>{
+      const center=L.geoJSON(f).getBounds().getCenter();
+      L.marker(center,{interactive:false,keyboard:false,icon:L.divIcon({
+        className:'voter-parcel-dot-wrap',
+        html:'<span class="voter-parcel-dot"></span>',
+        iconSize:[size,size],iconAnchor:[size/2,size/2]
+      })}).addTo(voterCueLayer);
+    });
+  }
+
+  const legend=$('voterCueLegend');
+  const label=$('voterCueLabel');
+  if(label){
+    if(!cueFeatures.length)label.textContent='Finding voter properties…';
+    else if(zoom<16)label.textContent=`${cueFeatures.length} voter properties · zoom in for dots`;
+    else label.textContent=`Registered voter · ${cueFeatures.length} properties`;
+  }
+  if(legend)legend.classList.remove('hidden');
+}
+function loadCachedRegisteredVoterParcels(){
   try{
     const cached=JSON.parse(localStorage.getItem(VOTER_CUE_CACHE_KEY)||'null');
-    if(Array.isArray(cached?.points)&&cached.points.length){
-      renderRegisteredVoterCues(cached.points);
+    if(Array.isArray(cached?.parcelIds)&&cached.parcelIds.length){
+      renderRegisteredVoterParcels(cached.parcelIds);
       return true;
     }
   }catch{}
   return false;
 }
-async function loadRegisteredVoterCues(boundary){
-  loadCachedRegisteredVoterCues();
+function voterStreetNames(){
+  const names=new Set();
+  Object.keys(voterData.by_key||{}).forEach(k=>{
+    const [,street='']=String(k).split('|');
+    if(street)names.add(street);
+  });
+  return [...names].sort();
+}
+async function queryAddressStreetBatch(streets,envelope){
+  const clauses=streets.map(street=>`UPPER(STREET_NAME)='${street.replace(/'/g,"''")}'`);
+  const p=new URLSearchParams({
+    where:`(${clauses.join(' OR ')})`,
+    outFields:'CIVIC_ID,FULL_ADDRESS,STREET_NUMBER,STREET_NAME,STREET_TYPE',
+    f:'json',returnGeometry:'true',outSR:'4326',
+    geometry:envelope,geometryType:'esriGeometryEnvelope',inSR:'4326',
+    spatialRel:'esriSpatialRelIntersects',resultRecordCount:'2000'
+  });
+  const r=await fetch(ADDRESS_QUERY+'?'+p.toString(),{cache:'no-store'});
+  if(!r.ok)throw new Error(`Address lookup ${r.status}`);
+  const j=await r.json();
+  if(j.error)throw new Error(j.error.message||'Address lookup failed');
+  return j.features||[];
+}
+async function queryAllAddressesPaged(envelope){
+  const all=[];
+  let previousFirstId=null;
+  for(let offset=0;offset<12000;offset+=1000){
+    const p=new URLSearchParams({
+      where:'1=1',
+      outFields:'CIVIC_ID,FULL_ADDRESS,STREET_NUMBER,STREET_NAME,STREET_TYPE',
+      f:'json',returnGeometry:'true',outSR:'4326',
+      geometry:envelope,geometryType:'esriGeometryEnvelope',inSR:'4326',
+      spatialRel:'esriSpatialRelIntersects',resultOffset:String(offset),resultRecordCount:'1000'
+    });
+    const r=await fetch(ADDRESS_QUERY+'?'+p.toString(),{cache:'no-store'});
+    if(!r.ok)throw new Error(`Address lookup ${r.status}`);
+    const j=await r.json();
+    if(j.error)throw new Error(j.error.message||'Address lookup failed');
+    const page=j.features||[];
+    if(!page.length)break;
+    const first=page[0]?.attributes?.CIVIC_ID ?? page[0]?.properties?.CIVIC_ID ?? null;
+    // Some older ArcGIS services ignore resultOffset. Avoid looping over the
+    // same first page forever; the street-query fallback below will take over.
+    if(offset>0&&first!==null&&first===previousFirstId)break;
+    previousFirstId=first;
+    all.push(...page);
+    if(page.length<1000&&!j.exceededTransferLimit)break;
+  }
+  return all;
+}
+function addVoterParcelsFromAddressHits(hits,target){
+  for(const hit of hits||[]){
+    const a=hit.attributes||hit.properties||{};
+    if(!addressHasRegisteredVoter(a))continue;
+    const geom=hit.geometry||{};
+    const lng=Number(geom.x ?? geom.coordinates?.[0]);
+    const lat=Number(geom.y ?? geom.coordinates?.[1]);
+    if(!Number.isFinite(lng)||!Number.isFinite(lat))continue;
+    parcelIdsForAddressPoint(lng,lat).forEach(id=>target.add(id));
+  }
+}
+async function loadRegisteredVoterParcels(){
+  const hadCache=loadCachedRegisteredVoterParcels();
+  const legend=$('voterCueLegend');
+  const label=$('voterCueLabel');
+  if(legend)legend.classList.remove('hidden');
+  if(label&&!hadCache)label.textContent='Finding voter properties…';
   try{
     const b=boundaryLayer.getBounds();
     const envelope=[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()].join(',');
-    const baseParams={
-      where:'1=1',
-      geometry:envelope,
-      geometryType:'esriGeometryEnvelope',
-      inSR:'4326',
-      outSR:'4326',
-      spatialRel:'esriSpatialRelIntersects'
-    };
+    const found=new Set();
 
-    // Ask ArcGIS for object IDs first. The IDs-only response is not subject to
-    // the normal feature transfer limit, so this remains complete even when
-    // Area A contains more addresses than one query page can return.
-    const idParams=new URLSearchParams({...baseParams,returnIdsOnly:'true',returnGeometry:'false',f:'json'});
-    const idResponse=await fetch(ADDRESS_QUERY+'?'+idParams.toString(),{cache:'no-store'});
-    if(!idResponse.ok)throw new Error('Address lookup failed');
-    const idJson=await idResponse.json();
-    if(idJson.error)throw new Error(idJson.error.message||'Address lookup failed');
-    const ids=Array.isArray(idJson.objectIds)?idJson.objectIds:[];
-    if(!ids.length)return;
-
-    const found=[];
-    const seenAddressKeys=new Set();
-    const chunkSize=500;
-    for(let i=0;i<ids.length;i+=chunkSize){
-      const objectIds=ids.slice(i,i+chunkSize).join(',');
-      const p=new URLSearchParams({
-        objectIds,
-        outFields:'CIVIC_ID,STREET_NUMBER,STREET_NAME,STREET_TYPE',
-        f:'json',
-        returnGeometry:'true',
-        outSR:'4326'
-      });
-      const r=await fetch(ADDRESS_QUERY+'?'+p.toString(),{cache:'no-store'});
-      if(!r.ok)throw new Error('Address lookup failed');
-      const j=await r.json();
-      if(j.error)throw new Error(j.error.message||'Address lookup failed');
-      (j.features||[]).forEach(hit=>{
-        const a=hit.attributes||hit.properties||{};
-        if(!addressHasRegisteredVoter(a))return;
-        const pt=hit.geometry;
-        const lng=Number(pt?.x), lat=Number(pt?.y);
-        if(!Number.isFinite(lat)||!Number.isFinite(lng))return;
-        if(!pointInsideBoundary([lng,lat],boundary))return;
-        const k=matchedVoterKey(a);
-        if(seenAddressKeys.has(k))return;
-        seenAddressKeys.add(k);
-        found.push({lat,lng,key:k});
-      });
+    // Primary path: page through all civic-address points inside Area A, then
+    // match them locally against the bundled voter list. This avoids the
+    // one-request transfer-limit problem that made v17 appear to do nothing.
+    try{
+      const allHits=await queryAllAddressesPaged(envelope);
+      addVoterParcelsFromAddressHits(allHits,found);
+      if(found.size)renderRegisteredVoterParcels([...found]);
+    }catch(e){
+      console.warn('Paged voter-address scan failed; trying street batches',e);
     }
-    if(found.length){
-      renderRegisteredVoterCues(found);
-      try{localStorage.setItem(VOTER_CUE_CACHE_KEY,JSON.stringify({savedAt:Date.now(),points:found}))}catch{}
+
+    // Fallback/second pass: smaller street-name batches. This also fills gaps
+    // if the ArcGIS service does not support resultOffset pagination correctly.
+    const streets=voterStreetNames();
+    const batches=[];
+    for(let i=0;i<streets.length;i+=6)batches.push(streets.slice(i,i+6));
+    for(let i=0;i<batches.length;i+=4){
+      const wave=batches.slice(i,i+4);
+      const results=await Promise.all(wave.map(async batch=>{
+        try{return await queryAddressStreetBatch(batch,envelope)}
+        catch(e){
+          const fallback=[];
+          for(const street of batch){
+            try{fallback.push(...await queryAddressStreetBatch([street],envelope))}catch{}
+          }
+          return fallback;
+        }
+      }));
+      results.forEach(hits=>addVoterParcelsFromAddressHits(hits,found));
+      if(found.size)renderRegisteredVoterParcels([...found]);
+    }
+
+    if(found.size){
+      renderRegisteredVoterParcels([...found]);
+      try{localStorage.setItem(VOTER_CUE_CACHE_KEY,JSON.stringify({savedAt:Date.now(),parcelIds:[...found]}))}catch{}
+    }else if(!hadCache){
+      if(label)label.textContent='Registered voter cue unavailable';
     }
   }catch(e){
-    console.warn('Registered voter cues could not be refreshed',e);
+    console.warn('Registered voter parcel outlines could not be refreshed',e);
+    if(label&&!hadCache)label.textContent='Registered voter cue unavailable';
   }
 }
 
@@ -537,7 +658,13 @@ async function saveVoterEditor(editor){
   voter_names[addressKeyValue]=collectVoterPairs(editor);
   const row={...current,voter_names,phone:$('phone').value.trim(),email:$('email').value.trim()};
   const ok=await saveRow(parcelId,row);
-  if(ok)toast('Voter names saved');
+  if(ok){
+    const hasAny=Object.values(voter_names).some(list=>Array.isArray(list)&&list.length>0);
+    if(hasAny)registeredVoterParcelIds.add(parcelId);
+    else registeredVoterParcelIds.delete(parcelId);
+    renderRegisteredVoterParcels([...registeredVoterParcelIds]);
+    toast('Voter names saved');
+  }
   return ok;
 }
 
@@ -596,6 +723,7 @@ async function openSelected(lookupAddress=true){
   const selectedId=p.ParcelID;
   const addrs=await findAddressesForParcel(selected);
   if(!selected || selected.properties.ParcelID!==selectedId)return;
+  updateParcelVoterCueFromAddresses(selectedId,addrs);
   $('parcelInfo').innerHTML=addressHtml(addrs,selectedId);
   requestAnimationFrame(syncPanelToViewport);
 }
@@ -607,6 +735,7 @@ async function connect(url,key){
   const {data,error}=await supa.from('canvass_status').select('*');
   if(error)throw error;
   data.forEach(r=>state.set(r.parcel_id,normalizeRow(r)));
+  addSavedVoterCueParcels();
   channel=supa.channel('canvass-status')
     .on('postgres_changes',{event:'*',schema:'public',table:'canvass_status'},payload=>{
       if(payload.eventType==='DELETE')state.delete(payload.old.parcel_id);
@@ -625,6 +754,7 @@ async function init(){
   if(voters)voterData=voters;
   buildVoterSearchIndex();
   features=geo.features;
+  featureById=new Map(features.map(f=>[f.properties.ParcelID,f]));
   map=L.map('map',{zoomControl:true}).setView([48.55,-123.55],11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:20,attribution:'© OpenStreetMap contributors'}).addTo(map);
   boundaryLayer=L.geoJSON(boundary,{style:{color:'#111827',weight:3,fill:false}}).addTo(map);
@@ -632,8 +762,11 @@ async function init(){
     l.on('click',()=>{selected=f;openSelected()});
   }}).addTo(map);
   map.fitBounds(parcelsLayer.getBounds());
+  map.on('zoomend',()=>{
+    if(registeredVoterParcelIds.size)renderRegisteredVoterParcels([...registeredVoterParcelIds]);
+  });
   updateStats();
-  loadRegisteredVoterCues(boundary);
+  loadRegisteredVoterParcels();
 }
 
 $('closePanel').onclick=closePropertyPanel;
