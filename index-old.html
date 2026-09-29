@@ -624,82 +624,6 @@
     to   { opacity: 1; }
   }
 
-
-  /* ── FACEBOOK FEED ── */
-  .facebook-feed {
-    background: var(--cream);
-  }
-
-  .facebook-feed-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .facebook-feed-intro {
-    max-width: 620px;
-  }
-
-  .facebook-feed-intro p {
-    font-size: 1.02rem;
-    color: var(--text-mid);
-    line-height: 1.7;
-  }
-
-  .facebook-follow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    background: var(--facebook-blue);
-    color: var(--brand-white);
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.84rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: transform 0.15s ease, background 0.2s ease;
-  }
-
-  .facebook-follow:hover {
-    background: #0d65d8;
-    transform: translateY(-2px);
-  }
-
-  .facebook-feed-card {
-    max-width: 820px;
-    margin: 0 auto;
-    background: var(--brand-white);
-    padding: 1rem;
-    border: 1px solid rgba(0,88,149,0.12);
-    box-shadow: 0 12px 35px rgba(0,88,149,0.10);
-  }
-
-  .facebook-feed-card iframe {
-    display: block;
-    width: 100%;
-    min-height: 700px;
-    border: 0;
-  }
-
-  @media (max-width: 768px) {
-    .facebook-feed-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .facebook-feed-card {
-      padding: 0.5rem;
-    }
-
-    .facebook-feed-card iframe {
-      min-height: 650px;
-    }
-  }
-
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .hero {
@@ -836,7 +760,6 @@
     <li><a href="#priorities">Priorities</a></li>
     <li><a href="#record">Track Record</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="#facebook">Facebook</a></li>
     <div class="hide-on-small"><li><a href="#signup">Get Involved</a></li></div>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -853,7 +776,7 @@
       <span>Join the Campaign</span>
       <span>→</span>
     </a>
-    <a href="https://www.facebook.com/voteshaneryan/" class="hero-facebook" target="_blank" rel="noopener">
+    <a href="https://www.facebook.com/voteshaneryan" class="hero-facebook">
       <span>Follow me on Facebook</span>
       <span>→</span>
     </a>
@@ -994,37 +917,6 @@
         <p class="record-year">Mill Bay Community League President</p>
         <p class="record-desc"><strong style="color:var(--gold)">5 Years of Service</strong> Raised thousands for the CMS Foodbank, the Francis Kelsey lunch program, and local community initiatives.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- FACEBOOK FEED -->
-<section class="facebook-feed" id="facebook">
-  <div class="container">
-    <div class="facebook-feed-header">
-      <div class="facebook-feed-intro">
-        <p class="section-label">From the Campaign</p>
-        <h2 class="section-title">Follow Along on <span class="accent">Facebook</span></h2>
-        <p>Get the latest campaign updates, community events, videos, and conversations from Shane and the campaign.</p>
-      </div>
-      <a class="facebook-follow" href="https://www.facebook.com/voteshaneryan/" target="_blank" rel="noopener">
-        <span>Visit Facebook</span>
-        <span>→</span>
-      </a>
-    </div>
-
-    <div class="facebook-feed-card">
-      <iframe
-        title="Shane Ryan campaign Facebook feed"
-        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fvoteshaneryan%2F&tabs=timeline&width=760&height=700&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false"
-        width="760"
-        height="700"
-        style="border:none;overflow:hidden"
-        scrolling="no"
-        frameborder="0"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-      </iframe>
     </div>
   </div>
 </section>
