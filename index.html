@@ -625,6 +625,115 @@
   }
 
 
+
+
+  /* ── 7-POINT PLATFORM ── */
+  .platform-section {
+    background: var(--warm-white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .platform-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-teal), var(--brand-green));
+  }
+
+  .platform-header {
+    max-width: 760px;
+    margin-bottom: 2.5rem;
+  }
+
+  .platform-intro {
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--text-mid);
+    max-width: 680px;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.35rem;
+  }
+
+  .platform-card {
+    background: var(--brand-soft);
+    border: 1px solid rgba(0,88,149,0.10);
+    border-top: 4px solid var(--brand-green);
+    padding: 1.6rem 1.7rem 1.7rem;
+    box-shadow: 0 8px 24px rgba(0,88,149,0.06);
+  }
+
+  .platform-card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .platform-number {
+    width: 2.15rem;
+    height: 2.15rem;
+    flex: 0 0 2.15rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-navy);
+    color: var(--brand-white);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .platform-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.18rem;
+    line-height: 1.25;
+    color: var(--forest);
+    margin-top: 0.2rem;
+  }
+
+  .platform-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--text-mid);
+  }
+
+  .platform-card li {
+    margin: 0 0 0.55rem;
+    padding-left: 0.15rem;
+    font-size: 0.96rem;
+    line-height: 1.55;
+  }
+
+  .platform-card li:last-child { margin-bottom: 0; }
+
+  .platform-closing {
+    margin-top: 2.4rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(100deg, var(--brand-navy), var(--brand-teal));
+    color: var(--brand-white);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 768px) {
+    .platform-section { padding: 4rem 0; }
+    .platform-header { margin-bottom: 1.75rem; }
+    .platform-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .platform-card { padding: 1.35rem 1.25rem 1.4rem; }
+    .platform-card h3 { font-size: 1.1rem; }
+    .platform-card li { font-size: 0.94rem; line-height: 1.5; }
+    .platform-closing { margin-top: 1.5rem; padding: 1rem 1.1rem; }
+  }
+
   /* ── FACEBOOK FEED ── */
   .facebook-feed {
     background: var(--cream);
@@ -891,6 +1000,108 @@
     <span class="stat-label">Fought against Director Pay Increase During COVID</span>
   </div>
 </div>-->
+
+
+<!-- PLATFORM -->
+<section class="platform-section" id="platform">
+  <div class="container">
+    <div class="platform-header">
+      <p class="section-label">My Platform</p>
+      <h2 class="section-title">Less is More. <span class="accent">Less Taxes. More Transparency.</span></h2>
+      <p class="platform-intro">Seven practical priorities for Mill Bay / Malahat focused on responsible spending, infrastructure, transparency and strong community representation.</p>
+    </div>
+
+    <div class="platform-grid">
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">1</span>
+          <h3>Rein In Spending &amp; Protect Taxpayers</h3>
+        </div>
+        <ul>
+          <li>Work with the Board to set firm limits on tax increases rather than allowing staff to drive the discussion.</li>
+          <li>Review senior management against comparable local governments and eliminate unnecessary layers.</li>
+          <li>Require a clear business case before automatically replacing positions when staff leave or retire. Consider a moratorium on backfilling roles.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">2</span>
+          <h3>Responsible Development — Community First</h3>
+        </div>
+        <ul>
+          <li>Pause major new development approvals where existing infrastructure cannot support further growth.</li>
+          <li>Bring residents into major development discussions at the beginning — not the end.</li>
+          <li>Secure appropriate community benefits such as water infrastructure, parks, trails, wildfire protection and recreation.</li>
+          <li>Development should help improve community infrastructure, not simply provide enough infrastructure for itself.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">3</span>
+          <h3>Open the Doors at the CVRD</h3>
+        </div>
+        <ul>
+          <li>Return CVRD meetings to evening hours so working residents can participate and more people can consider running for office.</li>
+          <li>Restart monthly Area Director updates at the Mill Bay Community Hall so residents can ask tough questions and get updates in person.</li>
+          <li>Create a searchable voting dashboard so residents can easily see how each Director voted on each issue.</li>
+          <li>Front-load significant development applications with public input. Residents should be involved at the beginning, not the end.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">4</span>
+          <h3>Protect Our Water</h3>
+        </div>
+        <ul>
+          <li>Create a simple public dashboard showing water availability, capacity and key data.</li>
+          <li>No major new development without upfront investment that increases water capacity for the broader community, not just the development itself.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">5</span>
+          <h3>Prepare for Wildfire &amp; Emergencies</h3>
+        </div>
+        <ul>
+          <li>Strengthen wildfire prevention, evacuation planning and emergency preparedness.</li>
+          <li>Protect forests and watersheds that are critical to community safety.</li>
+          <li>Require the emergency-service and firefighting costs of major developments to be identified before approval.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">6</span>
+          <h3>Safer Roads &amp; Better Transportation</h3>
+        </div>
+        <ul>
+          <li>Be a persistent advocate with the Province on dangerous intersections, potholes, road maintenance and winter conditions.</li>
+          <li>Push for better transit and bus stops in underserved parts of Mill Bay / Malahat.</li>
+          <li>Publicly report what has been requested from other levels of government, and the response received.</li>
+        </ul>
+      </article>
+
+      <article class="platform-card">
+        <div class="platform-card-head">
+          <span class="platform-number">7</span>
+          <h3>Make It Easier to Do Business Locally</h3>
+        </div>
+        <ul>
+          <li>Simplify unnecessarily slow and expensive permitting processes.</li>
+          <li>Create faster, more predictable Temporary Use Permit timelines.</li>
+          <li>Support local entrepreneurs, home-based businesses, daycares and other services our community needs.</li>
+          <li>Protect the public without creating unnecessary barriers for legitimate small businesses.</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="platform-closing">Experienced. Independent. Community Focused.</div>
+  </div>
+</section>
 
 <!-- FACEBOOK FEED -->
 <section class="facebook-feed" id="facebook">
